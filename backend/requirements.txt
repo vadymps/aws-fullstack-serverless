@@ -1,0 +1,2 @@
+# Placeholder requirements
+# e.g. pymongo[srv]

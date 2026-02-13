@@ -1,0 +1,43 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+
+# Lambda artifacts
+infra/lambda.zip
+
+# Python (backend)
+backend/.venv/
+backend/.build/
+backend/__pycache__/
+backend/**/*.pyc
+backend/.pytest_cache/
+backend/.mypy_cache/
+
+# Node / Angular (frontend)
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/coverage/
+frontend/.cache/
+
+# Environment and local secrets
+.env
+.env.*
+!.env.example
+ai-chat.txt
+infra/aws-fullstack-serverless-inline-policy.json
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+
+# temp
+.github/workflows/ci-cd.yml
