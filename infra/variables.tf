@@ -4,16 +4,22 @@ variable "project_name" {
   default     = "aws-fullstack-serverless"
 }
 
-variable "s3_bucket_name" {
+variable "aws_region" {
   type        = string
-  description = "Optional S3 bucket name for the frontend site (leave empty to auto-generate)"
-  default     = ""
+  description = "AWS region"
+  default     = "eu-central-1"
+}
+
+variable "aws_profile" {
+  type        = string
+  description = "AWS profile"
+  default     = "dev"
 }
 
 variable "lambda_runtime" {
   type        = string
   description = "Lambda runtime"
-  default     = "python3.11"
+  default     = "python3.12"
 }
 
 variable "lambda_handler" {

@@ -1,6 +1,5 @@
 export const environment = {
   production: true,
-  // Set to your API Gateway base URL for production builds (or wire in a deploy-time config).
-  apiUrl: ''
+  apiUrl: 'https://xrycsmvo0e.execute-api.eu-central-1.amazonaws.com'
 };
 

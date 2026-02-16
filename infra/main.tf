@@ -6,28 +6,16 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.0"
-    }
   }
 }
 
 provider "aws" {
-  region = "eu-central-1"
-  profile = "dev"
-}
-
-resource "random_id" "suffix" {
-  byte_length = 3
-}
-
-locals {
-  s3_bucket_name = var.s3_bucket_name != "" ? var.s3_bucket_name : "${var.project_name}-web-${random_id.suffix.hex}"
+  region  = var.aws_region
+  profile = var.aws_profile
 }
 
 resource "aws_s3_bucket" "site" {
-  bucket = local.s3_bucket_name
+  bucket = "${var.project_name}-bucket"
 }
 
 resource "aws_s3_bucket_website_configuration" "site" {

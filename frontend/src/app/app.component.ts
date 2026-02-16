@@ -22,7 +22,7 @@ export class AppComponent {
       return;
     }
 
-    const url = `${apiBaseUrl.replace(/\/+$/, '')}/ping`;
+    const url = `${apiBaseUrl.replace(/\/+$/, '')}/health`;
 
     this.http
       .get<{ ok: boolean; server_ms?: number }>(url)

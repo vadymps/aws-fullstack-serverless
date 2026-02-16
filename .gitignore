@@ -38,6 +38,3 @@ Thumbs.db
 .idea/
 .vscode/
 
-
-# temp
-.github/workflows/ci-cd.yml

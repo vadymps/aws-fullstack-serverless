@@ -1,0 +1,53 @@
+name: ci-cd-test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm ci
+          npm run build -- --configuration production
+
+      - name: Sync frontend to S3
+        run: aws s3 sync frontend/dist s3://aws-fullstack-serverless-bucket --delete
+
+      - name: Build Lambda zip
+        run: ./backend/build.sh
+
+      - name: Deploy Lambda code
+        run: |
+          aws lambda update-function-code \
+            --function-name ${{ secrets.AWS_LAMBDA_FUNCTION_NAME }} \
+            --zip-file fileb://infra/lambda.zip \
+            --publish
+          aws lambda wait function-updated \
+            --function-name ${{ secrets.AWS_LAMBDA_FUNCTION_NAME }}
