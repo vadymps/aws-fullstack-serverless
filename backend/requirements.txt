@@ -1,2 +1,2 @@
-# Placeholder requirements
-# e.g. pymongo[srv]
+pymongo>=4.15.2
+dnspython>=2.6.1

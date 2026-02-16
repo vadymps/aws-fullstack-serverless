@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Local SAM template for the backend Lambda + HTTP API
+
+Resources:
+  BackendApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowMethods:
+          - GET
+          - OPTIONS
+        AllowHeaders:
+          - "*"
+
+  BackendFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: src/app.handler
+      Runtime: python3.12
+      Timeout: 10
+      MemorySize: 256
+      Environment:
+        Variables:
+          MONGODB_URI: "placeholder"
+          MONGODB_DB: "placeholder"
+      Events:
+        Root:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BackendApi
+            Method: GET
+            Path: /
+        Movies:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BackendApi
+            Method: GET
+            Path: /movies
+        Users:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BackendApi
+            Method: GET
+            Path: /users

@@ -10,6 +10,11 @@ crash.*.log
 # Lambda artifacts
 infra/lambda.zip
 
+# AWS SAM generated assets
+backend/.aws-sam/
+backend/aws-sam-cli-linux-x86_64.zip
+backend/sam-installation/
+
 # Python (backend)
 backend/.venv/
 backend/.build/
@@ -17,6 +22,7 @@ backend/__pycache__/
 backend/**/*.pyc
 backend/.pytest_cache/
 backend/.mypy_cache/
+backend/env.json
 
 # Node / Angular (frontend)
 frontend/node_modules/
@@ -37,7 +43,3 @@ infra/aws-fullstack-serverless-inline-policy.json
 Thumbs.db
 .idea/
 .vscode/
-
-
-# temp
-.github/workflows/ci-cd.yml

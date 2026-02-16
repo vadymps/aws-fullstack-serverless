@@ -16,6 +16,13 @@ This repo will host a minimal AWS serverless demo with:
 ## Status
 Scaffold only. No detailed code yet.
 
+## Local Backend (AWS SAM)
+- `cd backend`
+- `sam build --use-container`
+- `sam local start-api --env-vars env.json`
+
+Default local API URL is `http://127.0.0.1:3000`.
+
 ## CI/CD prerequisites (planned)
 - GitHub repo secrets:
   - `AWS_OIDC_ROLE_ARN`: IAM role ARN for GitHub OIDC

@@ -1,6 +1,5 @@
 export const environment = {
   production: false,
-  // FastAPI local dev default. Change to your API Gateway base URL when needed.
-  apiUrl: 'http://localhost:8000'
+  // AWS SAM local API default. Change to your deployed API Gateway URL when needed.
+  apiUrl: 'http://127.0.0.1:3000'
 };
-

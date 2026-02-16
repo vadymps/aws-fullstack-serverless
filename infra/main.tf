@@ -6,28 +6,18 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.0"
-    }
   }
 }
 
 provider "aws" {
-  region = "eu-central-1"
-  profile = "dev"
-}
-
-resource "random_id" "suffix" {
-  byte_length = 3
-}
-
-locals {
-  s3_bucket_name = var.s3_bucket_name != "" ? var.s3_bucket_name : "${var.project_name}-web-${random_id.suffix.hex}"
+  region  = var.aws_region
+  profile = var.aws_profile
 }
 
 resource "aws_s3_bucket" "site" {
-  bucket = local.s3_bucket_name
+  bucket = "${var.project_name}-bucket"
+  
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_website_configuration" "site" {
@@ -89,7 +79,7 @@ resource "aws_iam_role_policy_attachment" "lambda_basic" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-resource "aws_lambda_function" "api" {
+resource "aws_lambda_function" "lambda" {
   function_name = "${var.project_name}-lambda"
   role          = aws_iam_role.lambda.arn
   runtime       = var.lambda_runtime
@@ -97,6 +87,13 @@ resource "aws_lambda_function" "api" {
 
   filename         = "${path.module}/lambda.zip"
   source_code_hash = filebase64sha256("${path.module}/lambda.zip")
+
+  environment {
+    variables = {
+      MONGODB_URI = var.mongodb_uri
+      MONGODB_DB  = var.mongodb_db
+    }
+  }
 }
 
 resource "aws_apigatewayv2_api" "http" {
@@ -113,7 +110,7 @@ resource "aws_apigatewayv2_api" "http" {
 resource "aws_apigatewayv2_integration" "lambda" {
   api_id                 = aws_apigatewayv2_api.http.id
   integration_type       = "AWS_PROXY"
-  integration_uri        = aws_lambda_function.api.arn
+  integration_uri        = aws_lambda_function.lambda.arn
   payload_format_version = "2.0"
 }
 
@@ -123,9 +120,15 @@ resource "aws_apigatewayv2_route" "root" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
 
-resource "aws_apigatewayv2_route" "health" {
+resource "aws_apigatewayv2_route" "movies" {
   api_id    = aws_apigatewayv2_api.http.id
-  route_key = "GET /health"
+  route_key = "GET /movies"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+}
+
+resource "aws_apigatewayv2_route" "users" {
+  api_id    = aws_apigatewayv2_api.http.id
+  route_key = "GET /users"
   target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
 
@@ -138,7 +141,7 @@ resource "aws_apigatewayv2_stage" "default" {
 resource "aws_lambda_permission" "api" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.api.function_name
+  function_name = aws_lambda_function.lambda.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.http.execution_arn}/*/*"
 }

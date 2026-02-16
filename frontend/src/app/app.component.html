@@ -1,5 +1,23 @@
 <main class="card">
   <h1>{{ title }}</h1>
-  <p>Angular is running.</p>
-  <p class="muted">{{ apiMessage() }}</p>
+
+  <p class="muted" *ngIf="loading()">Loading movies...</p>
+  <p class="error" *ngIf="error()">{{ error() }}</p>
+
+  <ul class="movies" *ngIf="!loading() && !error()">
+    <li *ngFor="let movie of movies()">
+      <h2>{{ movie.title || 'Untitled' }}</h2>
+      <p>
+        <span *ngIf="movie.year">{{ movie.year }}</span>
+        <span *ngIf="movie.runtime"> • {{ movie.runtime }} min</span>
+      </p>
+      <p class="muted" *ngIf="movie.genres?.length">{{ movie.genres?.join(', ') }}</p>
+    </li>
+  </ul>
+
+  <div class="pagination" *ngIf="!error()">
+    <button type="button" (click)="prevPage()" [disabled]="loading() || page() <= 1">Previous</button>
+    <span>Page {{ page() }} / {{ totalPages() }} ({{ total() }} total)</span>
+    <button type="button" (click)="nextPage()" [disabled]="loading() || page() >= totalPages()">Next</button>
+  </div>
 </main>
