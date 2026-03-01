@@ -28,6 +28,12 @@ variable "lambda_handler" {
   default     = "app.handler"
 }
 
+variable "lambda_timeout" {
+  type        = number
+  description = "Lambda function timeout in seconds"
+  default     = 5
+}
+
 variable "mongodb_uri" {
   type        = string
   description = "MongoDB Atlas connection URI"
