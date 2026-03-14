@@ -1,0 +1,15 @@
+@if (authorized()) {
+  <router-outlet></router-outlet>
+} @else {
+  <section class="skeleton-shell">
+    <div class="skeleton-card">
+      <div class="skeleton-avatar"></div>
+      <div class="skeleton-lines">
+        <div class="skeleton-line skeleton-line--wide"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+      </div>
+      <p class="skeleton-message">Перенаправляем на страницу входа...</p>
+    </div>
+  </section>
+}

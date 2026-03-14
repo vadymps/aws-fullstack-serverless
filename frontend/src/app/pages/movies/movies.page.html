@@ -1,0 +1,37 @@
+<main class="card">
+  @if (!error()) {
+  <div class="pagination">
+    <button type="button" (click)="prevPage()" [disabled]="loading() || page() <= 1">Previous</button>
+    <span>Page {{ page() }} / {{ totalPages() }} ({{ total() }} total)</span>
+    <button type="button" (click)="nextPage()" [disabled]="loading() || page() >= totalPages()">Next</button>
+  </div>
+  }
+
+  @if (loading()) {
+  <p class="muted">Loading movies...</p>
+  }
+  @if (error()) {
+  <p class="error">{{ error() }}</p>
+  }
+
+  @if (!loading() && !error()) {
+  <ul class="movies">
+    @for (movie of movies(); track movie._id) {
+    <li>
+      <h2>{{ movie.title || 'Untitled' }}</h2>
+      <p>
+        @if (movie.year) {
+        <span>{{ movie.year }}</span>
+        }
+        @if (movie.runtime) {
+        <span> • {{ movie.runtime }} min</span>
+        }
+      </p>
+      @if (movie.genres?.length) {
+      <p class="muted">{{ movie.genres?.join(', ') }}</p>
+      }
+    </li>
+    }
+  </ul>
+  }
+</main>

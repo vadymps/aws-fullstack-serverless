@@ -1,23 +1,24 @@
-<main class="card">
-  <h1>{{ title }}</h1>
+<mat-sidenav-container class="app-shell">
+  <mat-sidenav
+    #drawer
+    class="app-sidenav"
+    [mode]="isHandset() ? 'over' : 'side'"
+    [opened]="!isHandset()"
+    [disableClose]="!isHandset()"
+  >
+    <nav class="sidenav-content">
+      <a mat-button routerLink="/movies" (click)="closeDrawerOnNavigate(drawer)">Movies</a>
+      <a mat-button routerLink="/profile" (click)="closeDrawerOnNavigate(drawer)">Profile</a>
+    </nav>
+  </mat-sidenav>
 
-  <p class="muted" *ngIf="loading()">Loading movies...</p>
-  <p class="error" *ngIf="error()">{{ error() }}</p>
+  <mat-sidenav-content class="app-content">
+    <app-header [showMenu]="isHandset()" (menuClick)="drawer.toggle()"></app-header>
 
-  <ul class="movies" *ngIf="!loading() && !error()">
-    <li *ngFor="let movie of movies()">
-      <h2>{{ movie.title || 'Untitled' }}</h2>
-      <p>
-        <span *ngIf="movie.year">{{ movie.year }}</span>
-        <span *ngIf="movie.runtime"> • {{ movie.runtime }} min</span>
-      </p>
-      <p class="muted" *ngIf="movie.genres?.length">{{ movie.genres?.join(', ') }}</p>
-    </li>
-  </ul>
+    <main class="app-main">
+      <router-outlet></router-outlet>
+    </main>
 
-  <div class="pagination" *ngIf="!error()">
-    <button type="button" (click)="prevPage()" [disabled]="loading() || page() <= 1">Previous</button>
-    <span>Page {{ page() }} / {{ totalPages() }} ({{ total() }} total)</span>
-    <button type="button" (click)="nextPage()" [disabled]="loading() || page() >= totalPages()">Next</button>
-  </div>
-</main>
+    <app-footer></app-footer>
+  </mat-sidenav-content>
+</mat-sidenav-container>

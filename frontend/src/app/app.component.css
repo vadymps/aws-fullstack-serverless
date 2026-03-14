@@ -1,67 +1,30 @@
-.card {
-  max-width: 720px;
-  padding: 2rem;
-  border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 10px 30px rgba(31, 41, 55, 0.12);
+:host {
+  display: block;
 }
 
-h1 {
-  margin: 0 0 0.5rem 0;
-  font-size: 2rem;
+.app-shell {
+  min-height: 100vh;
 }
 
-.muted {
-  margin: 0.5rem 0 0 0;
-  color: #6b7280;
-  font-size: 0.95rem;
+.app-sidenav {
+  width: 220px;
+  padding-top: 8px;
 }
 
-.error {
-  color: #b91c1c;
-  margin: 0.5rem 0 0 0;
-}
-
-.movies {
-  list-style: none;
-  margin: 1rem 0;
-  padding: 0;
-  display: grid;
-  gap: 0.75rem;
-}
-
-.movies li {
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 0.9rem 1rem;
-}
-
-.movies h2 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1.05rem;
-}
-
-.movies p {
-  margin: 0.15rem 0;
-}
-
-.pagination {
+.sidenav-content {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 12px;
 }
 
-.pagination button {
-  border: 0;
-  border-radius: 8px;
-  padding: 0.45rem 0.9rem;
-  background: #111827;
-  color: #fff;
-  cursor: pointer;
+.app-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.pagination button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.app-main {
+  flex: 1;
+  max-width: 100%;
 }

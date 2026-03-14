@@ -19,6 +19,11 @@ From `backend/`:
 - `sam build --use-container`
 - `sam local start-api --template-file .aws-sam/build/template.yaml --env-vars env.json`
 
+For faster local iterations (keep Lambda container warm / "hot state"):
+- `sam local start-api --host 0.0.0.0 --template-file .aws-sam/build/template.yaml --env-vars env.json --warm-containers EAGER`
+- Use `LAZY` instead of `EAGER` if you want lower resource usage while still reducing repeated cold starts:
+- `sam local start-api --host 0.0.0.0 --template-file .aws-sam/build/template.yaml --env-vars env.json --warm-containers LAZY`
+
 Local API URL:
 - `http://127.0.0.1:3000`
 
