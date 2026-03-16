@@ -6,6 +6,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideOAuthClient } from 'angular-oauth2-oidc';
 import { AppComponent } from './app/app.component';
 import { AppConfigService } from './app/services/app-config.service';
+import { AuthService } from './app/services/auth.service';
 import { routes } from './app/app.routes';
 import { authInterceptor } from './app/interceptors/auth.interceptor';
 
@@ -18,8 +19,11 @@ bootstrapApplication(AppComponent, {
     provideOAuthClient(),
     {
       provide: APP_INITIALIZER,
-      useFactory: (config: AppConfigService) => () => config.load(),
-      deps: [AppConfigService],
+      useFactory: (config: AppConfigService, auth: AuthService) => async () => {
+        await config.load();
+        await auth.init();
+      },
+      deps: [AppConfigService, AuthService],
       multi: true
     }
   ]

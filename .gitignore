@@ -33,7 +33,7 @@ frontend/dist/
 frontend/.angular/
 frontend/coverage/
 frontend/.cache/
-frontend/src/assets/config.json
+frontend/src/assets/config*.json
 
 # Environment and local secrets
 .env

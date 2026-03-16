@@ -1,26 +1,48 @@
-<main class="card">
-  <div class="profile-header">
-    <div class="profile-avatar">JD</div>
-    <div>
-      <h1>Jane Doe</h1>
-      <p class="muted">jane.doe&#64;example.com</p>
-    </div>
-  </div>
-
-  <section class="profile-details">
-    <div>
-      <h2>Account</h2>
-      <p class="muted">Active since 2024</p>
-    </div>
-    <div>
-      <h2>Plan</h2>
-      <p class="muted">Free</p>
+@if (checking()) {
+  <section class="skeleton-shell">
+    <div class="skeleton-card">
+      <div class="skeleton-avatar"></div>
+      <div class="skeleton-lines">
+        <div class="skeleton-line skeleton-line--wide"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+      </div>
+      <p class="skeleton-message">Checking your session...</p>
     </div>
   </section>
+} @else if (authorized()) {
+  <main class="card">
+    <div class="profile-header">
+      <div class="profile-avatar">{{ auth.getUserInitials() }}</div>
+      <div>
+        <h1>{{ auth.getUserDisplayName() }}</h1>
+        <p class="muted">{{ auth.getUserEmail() || 'Email not available' }}</p>
+      </div>
+    </div>
 
-  <div class="profile-actions">
-    <button mat-raised-button color="primary" type="button" (click)="login()">
-      Sign in
-    </button>
-  </div>
-</main>
+    <div class="profile-actions">
+      <button mat-stroked-button type="button" (click)="auth.logout()">
+        Sign out
+      </button>
+    </div>
+  </main>
+} @else {
+  <main class="card login-card">
+    <div class="profile-header">
+      <div class="profile-avatar">??</div>
+      <div>
+        <h1>Sign in</h1>
+        <p class="muted">Use your account to access your profile.</p>
+      </div>
+    </div>
+
+    <form class="login-form" novalidate>
+      <div class="profile-actions">
+        <button mat-raised-button color="primary" type="button" (click)="login()">
+          Continue with Cognito
+        </button>
+      </div>
+      <p class="login-helper muted">You will be redirected to the Cognito hosted sign-in.</p>
+    </form>
+  </main>
+}

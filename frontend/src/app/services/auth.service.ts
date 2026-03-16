@@ -6,25 +6,13 @@ import { AppConfigService } from './app-config.service';
 export class AuthService {
   isAuthenticated = signal(false);
   private initPromise: Promise<void> | null = null;
+  private configured = false;
+  private authConfig: AuthConfig | null = null;
 
   constructor(
     private readonly oauthService: OAuthService,
     private readonly appConfig: AppConfigService
   ) {
-    const config = this.appConfig.get();
-    const authConfig: AuthConfig = {
-      issuer: config.auth.issuer,
-      clientId: config.auth.clientId,
-      redirectUri: config.auth.redirectUri,
-      postLogoutRedirectUri: config.auth.postLogoutRedirectUri,
-      responseType: 'code',
-      scope: config.auth.scope,
-      showDebugInformation: !config.production,
-      strictDiscoveryDocumentValidation: false
-    };
-    
-    this.oauthService.configure(authConfig);
-    this.oauthService.setupAutomaticSilentRefresh();
   }
 
   async init(): Promise<void> {
@@ -34,6 +22,25 @@ export class AuthService {
 
     this.initPromise = (async () => {
       try {
+        if (!this.configured) {
+          const config = this.appConfig.get();
+          const authConfig: AuthConfig = {
+            issuer: config.auth.issuer,
+            clientId: config.auth.clientId,
+            redirectUri: config.auth.redirectUri,
+            postLogoutRedirectUri: config.auth.postLogoutRedirectUri,
+            responseType: 'code',
+            scope: config.auth.scope,
+            showDebugInformation: true, // !config.production,
+            strictDiscoveryDocumentValidation: false
+          };
+
+          this.oauthService.configure(authConfig);
+          this.oauthService.setupAutomaticSilentRefresh();
+          this.configured = true;
+          this.authConfig = authConfig;
+        }
+
         console.log('Attempting to load the discovery document...');
         await this.oauthService.loadDiscoveryDocumentAndTryLogin();
         this.isAuthenticated.set(this.oauthService.hasValidAccessToken());
@@ -45,12 +52,22 @@ export class AuthService {
     return this.initPromise;
   }
 
-  login(): void {
+  async login(): Promise<void> {
+    await this.init();
     this.oauthService.initCodeFlow();
   }
 
-  logout(): void {
-    this.oauthService.logOut();
+  async logout(): Promise<void> {
+    await this.init();
+    const clientId = this.authConfig?.clientId;
+    const logoutUri = this.authConfig?.postLogoutRedirectUri;
+
+    if (clientId && logoutUri) {
+      this.oauthService.logOut({ client_id: clientId, logout_uri: logoutUri });
+    } else {
+      this.oauthService.logOut();
+    }
+
     this.isAuthenticated.set(false);
   }
 
@@ -75,5 +92,33 @@ export class AuthService {
     }
 
     return 'User';
+  }
+
+  getUserEmail(): string {
+    const claims = this.oauthService.getIdentityClaims() as Record<string, unknown> | null;
+    if (!claims) {
+      return '';
+    }
+
+    const raw = claims['email'];
+    return typeof raw === 'string' ? raw : '';
+  }
+
+  getUserInitials(): string {
+    const name = this.getUserDisplayName();
+    const email = this.getUserEmail();
+    const base = name !== 'Guest' && name !== 'User' ? name : email;
+    const cleaned = base.trim();
+
+    if (!cleaned) {
+      return '??';
+    }
+
+    const parts = cleaned.split(/\s+/);
+    if (parts.length === 1) {
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+
+    return (parts[0][0] + parts[1][0]).toUpperCase();
   }
 }
