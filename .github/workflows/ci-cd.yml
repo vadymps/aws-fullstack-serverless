@@ -18,31 +18,13 @@ jobs:
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Generate frontend config from Terraform outputs
-        run: |
-          terraform -chdir=infra init
-          terraform -chdir=infra output -json > /tmp/tfout.json
-          jq -n --slurpfile tf /tmp/tfout.json '{
-            apiUrl: $tf[0].api_url.value,
-            auth: {
-              clientId: $tf[0].cognito.value.clientId,
-              issuer: $tf[0].cognito.value.issuer,
-              redirectUri: $tf[0].cognito.value.redirectUri,
-              postLogoutRedirectUri: $tf[0].cognito.value.postLogoutRedirectUri,
-              scope: $tf[0].cognito.value.scope
-            }
-          }' > frontend/src/assets/config.json
 
       - name: Build frontend
         run: |
@@ -51,7 +33,7 @@ jobs:
           npm run build -- --configuration production
 
       - name: Sync frontend to S3
-        run: aws s3 sync frontend/dist s3://aws-fullstack-serverless-bucket --delete
+        run: aws s3 sync frontend/dist s3://${{ secrets.AWS_S3_WEBAPP_BUCKET_NAME }} --delete --exclude "assets/config.json"
 
       - name: Build Lambda zip
         run: ./backend/build.sh
