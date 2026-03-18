@@ -1,10 +1,13 @@
 resource "local_file" "webapp_config_dev" {
   filename = abspath("${path.module}/../frontend/src/assets/config.auto.json")
   content = jsonencode({
-    issuer                = "https://cognito-idp.${var.aws_region}.amazonaws.com/${aws_cognito_user_pool.main.id}"
-    clientId              = aws_cognito_user_pool_client.frontend.id
-    redirectUri           = "http://localhost:4200"
-    postLogoutRedirectUri = "http://localhost:4200"
-    scope                 = "openid profile email"
+    apiUrl = aws_apigatewayv2_api.http.api_endpoint,
+    auth = {
+      clientId              = local.cognito_client_id
+      issuer                = local.cognito_issuer_url
+      redirectUri           = local.webapp_url
+      postLogoutRedirectUri = local.webapp_url
+      scope                 = local.cognito_scopes
+    }
   })
 }

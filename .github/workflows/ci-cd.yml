@@ -26,6 +26,24 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Generate frontend config from Terraform outputs
+        run: |
+          terraform -chdir=infra init
+          terraform -chdir=infra output -json > /tmp/tfout.json
+          jq -n --slurpfile tf /tmp/tfout.json '{
+            apiUrl: $tf[0].api_url.value,
+            auth: {
+              clientId: $tf[0].cognito.value.clientId,
+              issuer: $tf[0].cognito.value.issuer,
+              redirectUri: $tf[0].cognito.value.redirectUri,
+              postLogoutRedirectUri: $tf[0].cognito.value.postLogoutRedirectUri,
+              scope: $tf[0].cognito.value.scope
+            }
+          }' > frontend/src/assets/config.json
+
       - name: Build frontend
         run: |
           cd frontend

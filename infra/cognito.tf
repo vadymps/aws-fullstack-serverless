@@ -29,8 +29,8 @@ resource "aws_cognito_user_pool_client" "frontend" {
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
 
-  callback_urls = ["http://localhost:4200"]
-  logout_urls   = ["http://localhost:4200"]
+  callback_urls = [local.webapp_url, "http://localhost:4200"]
+  logout_urls   = [local.webapp_url, "http://localhost:4200"]
 
   supported_identity_providers = ["COGNITO"]
 }

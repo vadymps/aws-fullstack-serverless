@@ -1,6 +1,6 @@
 output "webapp_url" {
   description = "Webapp URL"
-  value       = format("http://%s", aws_s3_bucket_website_configuration.site.website_endpoint)
+  value       = local.webapp_url
 }
 
 output "api_url" {
@@ -11,10 +11,10 @@ output "api_url" {
 output "cognito" {
   description = "Cognito config used by the frontend"
   value = {
-    issuer                = "https://cognito-idp.${var.aws_region}.amazonaws.com/${aws_cognito_user_pool.main.id}"
-    clientId              = aws_cognito_user_pool_client.frontend.id
-    redirectUri           = format("http://%s", aws_s3_bucket_website_configuration.site.website_endpoint)
-    postLogoutRedirectUri = format("http://%s", aws_s3_bucket_website_configuration.site.website_endpoint)
-    scope                 = join(" ", aws_cognito_user_pool_client.frontend.allowed_oauth_scopes)
+    issuer                = local.cognito_issuer_url
+    clientId              = local.cognito_client_id
+    redirectUri           = local.webapp_url
+    postLogoutRedirectUri = local.webapp_url
+    scope                 = local.cognito_scopes
   }
 }
