@@ -1,4 +1,4 @@
-resource "local_file" "webapp_config_dev" {
+resource "local_file" "webapp_config" {
   filename = abspath("${path.module}/../frontend/src/assets/config.auto.json")
   content = jsonencode({
     apiUrl = aws_apigatewayv2_api.http.api_endpoint,
@@ -10,4 +10,11 @@ resource "local_file" "webapp_config_dev" {
       scope                 = local.cognito_scopes
     }
   })
+}
+
+resource "aws_s3_object" "config_upload" {
+  bucket       = aws_s3_bucket.site.bucket
+  key          = "assets/config.json"
+  content      = local_file.webapp_config.content
+  content_type = "application/json"
 }
