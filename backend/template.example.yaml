@@ -11,6 +11,8 @@ Resources:
           - "*"
         AllowMethods:
           - GET
+          - POST
+          - DELETE
           - OPTIONS
         AllowHeaders:
           - "*"
@@ -25,8 +27,8 @@ Resources:
       MemorySize: 256
       Environment:
         Variables:
-          MONGODB_URI: "placeholder"
-          MONGODB_DB: "placeholder"
+          MONGODB_URI: "mongodb+srv://<USERNAME>:<PASSWORD>@aws-fullstack-serverles.n8copxl.mongodb.net"
+          MONGODB_DB: "sample_mflix"
       Events:
         Root:
           Type: HttpApi
@@ -40,9 +42,33 @@ Resources:
             ApiId: !Ref BackendApi
             Method: GET
             Path: /movies
-        Users:
+        MovieById:
           Type: HttpApi
           Properties:
             ApiId: !Ref BackendApi
             Method: GET
-            Path: /users
+            Path: /movies/{id}
+        Favorites:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BackendApi
+            Method: GET
+            Path: /favorites
+        FavoriteIds:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BackendApi
+            Method: GET
+            Path: /favorites/ids
+        FavoriteCreate:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BackendApi
+            Method: POST
+            Path: /favorites
+        FavoriteDelete:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BackendApi
+            Method: DELETE
+            Path: /favorites/{id}

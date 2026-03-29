@@ -16,13 +16,13 @@ Requirements:
 - AWS SAM CLI installed
 
 From `backend/`:
-- `sam build --use-container`
-- `sam local start-api --template-file .aws-sam/build/template.yaml --env-vars env.json`
+- `sam build --use-container --cached --skip-pull-image`
+- `sam local start-api --template-file .aws-sam/build/template.yaml`
 
 For faster local iterations (keep Lambda container warm / "hot state"):
-- `sam local start-api --host 0.0.0.0 --template-file .aws-sam/build/template.yaml --env-vars env.json --warm-containers EAGER`
+- `sam local start-api --host 0.0.0.0 --template-file .aws-sam/build/template.yaml --warm-containers EAGER`
 - Use `LAZY` instead of `EAGER` if you want lower resource usage while still reducing repeated cold starts:
-- `sam local start-api --host 0.0.0.0 --template-file .aws-sam/build/template.yaml --env-vars env.json --warm-containers LAZY`
+- `sam local start-api --host 0.0.0.0 --template-file .aws-sam/build/template.yaml --warm-containers LAZY`
 
 Local API URL:
 - `http://127.0.0.1:3000`
@@ -32,3 +32,30 @@ Example:
 
 Notes:
 - Keep Lambda runtime aligned across `template.yaml` and `infra/variables.tf`.
+
+## Debugging with SAM + VS Code (Python)
+
+Prereqs:
+- `debugpy` must be in `requirements.txt`
+- VS Code `launch.json` must map the backend folder:
+
+```json
+{
+  "name": "Attach SAM Local",
+  "type": "debugpy",
+  "request": "attach",
+  "connect": { "host": "localhost", "port": 5859 },
+  "pathMappings": [
+    { "localRoot": "${workspaceFolder}/backend", "remoteRoot": "/var/task" }
+  ]
+}
+```
+
+Start SAM with debug args:
+- `sam build --use-container --cached --skip-pull-image`
+- `sam local start-api --host 0.0.0.0 --template-file .aws-sam/build/template.yaml --warm-containers LAZY --debug-port 5859 --debug-function BackendFunction --debug-args "-m debugpy --listen 0.0.0.0:5859 --wait-for-client"`
+
+Attach flow:
+- Hit an endpoint once (for example `curl "http://127.0.0.1:3000/movies"`).
+- SAM should print `Waiting for debugger to attach...`
+- Then click “Attach SAM Local” in VS Code.

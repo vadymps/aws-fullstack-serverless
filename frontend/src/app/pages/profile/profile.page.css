@@ -7,6 +7,34 @@
   box-shadow: 0 10px 30px rgba(31, 41, 55, 0.12);
 }
 
+.btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #1d4ed8;
+  color: #fff;
+  box-shadow: 0 12px 20px rgba(37, 99, 235, 0.25);
+}
+
+.btn-primary:hover {
+  background: #1e40af;
+}
+
+.btn-outline {
+  background: #fff;
+  color: #1f2937;
+  border: 1px solid #d1d5db;
+}
+
+.btn-outline:hover {
+  background: #f8fafc;
+}
+
 .profile-header {
   display: flex;
   align-items: center;
@@ -125,5 +153,37 @@ h2 {
   }
   100% {
     background-position: -200% 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .card {
+    padding: 1.5rem;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .profile-avatar {
+    width: 56px;
+    height: 56px;
+    font-size: 0.9rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .profile-actions {
+    width: 100%;
+  }
+
+  .profile-actions .btn {
+    width: 100%;
   }
 }

@@ -31,8 +31,9 @@ export class AuthService {
             postLogoutRedirectUri: config.auth.postLogoutRedirectUri,
             responseType: 'code',
             scope: config.auth.scope,
-            showDebugInformation: true, // !config.production,
-            strictDiscoveryDocumentValidation: false
+            showDebugInformation: !config.production,
+            strictDiscoveryDocumentValidation: false,
+            requireHttps: config.auth.requireHttps,
           };
 
           this.oauthService.configure(authConfig);
@@ -45,7 +46,7 @@ export class AuthService {
         await this.oauthService.loadDiscoveryDocumentAndTryLogin();
         this.isAuthenticated.set(this.oauthService.hasValidAccessToken());
       } catch (err) {
-        console.error('CRITICAL ERROR: Cognito is not responding or the URL is incorrect!', err);
+        console.error('CRITICAL ERROR: ', err);
       }
     })();
 

@@ -4,7 +4,7 @@ resource "aws_apigatewayv2_api" "http" {
 
   cors_configuration {
     allow_origins = ["*"]
-    allow_methods = ["GET", "OPTIONS"]
+    allow_methods = ["GET", "POST", "DELETE", "OPTIONS"]
     allow_headers = ["*"]
   }
 }
@@ -40,9 +40,33 @@ resource "aws_apigatewayv2_route" "movies" {
   target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
 
-resource "aws_apigatewayv2_route" "users" {
+resource "aws_apigatewayv2_route" "favorites" {
   api_id             = aws_apigatewayv2_api.http.id
-  route_key          = "GET /users"
+  route_key          = "GET /favorites"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "favorites_ids" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "GET /favorites/ids"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "favorites_create" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "POST /favorites"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "favorites_delete" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "DELETE /favorites/{id}"
   target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.cognito.id

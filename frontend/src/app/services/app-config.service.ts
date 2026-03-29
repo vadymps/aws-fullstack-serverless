@@ -6,6 +6,7 @@ type AuthConfig = {
   redirectUri?: string;
   postLogoutRedirectUri?: string;
   scope?: string;
+  requireHttps?: boolean;
 };
 
 export type AppConfig = {

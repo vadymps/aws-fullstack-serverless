@@ -1,0 +1,1 @@
+mongodb_uri = "mongodb+srv://<USERNAME>:<PASSWORD>@aws-fullstack-serverles.n8copxl.mongodb.net"

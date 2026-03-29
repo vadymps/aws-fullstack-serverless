@@ -42,13 +42,13 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "frontend:build"
+            "buildTarget": "frontend:build",
+            "proxyConfig": "proxy.conf.json"
           }
         }
       }
     }
   },
-  "defaultProject": "frontend",
   "cli": {
     "analytics": "4d7514dd-97da-42b4-9c5a-24a9d6d8002b"
   }

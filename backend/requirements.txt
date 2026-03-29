@@ -1,2 +1,4 @@
 pymongo>=4.15.2
 dnspython>=2.6.1
+pydantic>=2.6.0
+debugpy==1.8.5

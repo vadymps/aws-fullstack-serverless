@@ -18,8 +18,8 @@ Scaffold only. No detailed code yet.
 
 ## Local Backend (AWS SAM)
 - `cd backend`
-- `sam build --use-container`
-- `sam local start-api --env-vars env.json`
+- `sam build --use-container --cached --skip-pull-image`
+- `sam local start-api`
 
 Default local API URL is `http://127.0.0.1:3000`.
 

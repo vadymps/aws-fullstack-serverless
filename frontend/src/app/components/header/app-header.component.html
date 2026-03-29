@@ -1,10 +1,10 @@
-<mat-toolbar color="primary" class="app-toolbar">
+<header class="app-toolbar">
   <div class="toolbar-inner">
     @if (showMenu) {
-      <button mat-button type="button" (click)="menuClick.emit()">Menu</button>
+      <button class="menu-button" type="button" (click)="menuClick.emit()">Menu</button>
     }
     <h1 class="brand">{{ pageTitle() }}</h1>
     <span class="toolbar-spacer"></span>
     <span class="user-name">{{ auth.getUserDisplayName() }}</span>
   </div>
-</mat-toolbar>
+</header>

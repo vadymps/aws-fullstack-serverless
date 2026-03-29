@@ -1,13 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-profile-page',
-  standalone: true,
-  imports: [MatButtonModule],
   templateUrl: './profile.page.html',
-  styleUrls: ['./profile.page.css']
+  styleUrls: ['./profile.page.css'],
+  standalone: true
 })
 export class ProfilePageComponent implements OnInit {
   public readonly auth = inject(AuthService);

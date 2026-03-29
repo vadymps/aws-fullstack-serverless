@@ -1,25 +1,34 @@
-<mat-sidenav-container class="app-shell">
-  <mat-sidenav
-    #drawer
-    class="app-sidenav"
-    [mode]="isHandset() ? 'over' : 'side'"
-    [opened]="!isHandset()"
-    [disableClose]="!isHandset()"
-  >
+<div class="app-shell">
+  <aside class="app-sidenav" [class.app-sidenav--hidden]="isHandset()">
     <nav class="sidenav-content">
-      <a mat-button routerLink="/movies" (click)="closeDrawerOnNavigate(drawer)">Movies</a>
-      <a mat-button routerLink="/users" (click)="closeDrawerOnNavigate(drawer)">Users</a>
-      <a mat-button routerLink="/profile" (click)="closeDrawerOnNavigate(drawer)">Profile</a>
+      <a class="nav-link" routerLink="/movies" (click)="handleNavClick()">Movies</a>
+      <a class="nav-link" routerLink="/favorites" (click)="handleNavClick()">Favorites</a>
+      <a class="nav-link" routerLink="/profile" (click)="handleNavClick()">Profile</a>
     </nav>
-  </mat-sidenav>
+  </aside>
 
-  <mat-sidenav-content class="app-content">
-    <app-header [showMenu]="isHandset()" (menuClick)="drawer.toggle()"></app-header>
+  <div class="app-content">
+    <app-header [showMenu]="isHandset()" (menuClick)="toggleMenu()"></app-header>
 
     <main class="app-main">
       <router-outlet></router-outlet>
     </main>
 
     <app-footer></app-footer>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  </div>
+
+  @if (isHandset()) {
+    <div
+      class="mobile-backdrop"
+      [class.mobile-backdrop--open]="menuOpen()"
+      (click)="closeMenu()"
+    ></div>
+    <aside class="mobile-drawer" [class.mobile-drawer--open]="menuOpen()">
+      <nav class="sidenav-content">
+        <a class="nav-link" routerLink="/movies" (click)="handleNavClick()">Movies</a>
+        <a class="nav-link" routerLink="/favorites" (click)="handleNavClick()">Favorites</a>
+        <a class="nav-link" routerLink="/profile" (click)="handleNavClick()">Profile</a>
+      </nav>
+    </aside>
+  }
+</div>
