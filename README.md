@@ -23,6 +23,10 @@ Scaffold only. No detailed code yet.
 
 Default local API URL is `http://127.0.0.1:3000`.
 
+## Frontend Build + S3 Upload
+- `npm run build -- --configuration production`
+- `aws s3 sync dist/ s3://YOUR_BUCKET_NAME/ --delete --exclude "assets/config.json"`
+
 ## CI/CD prerequisites (planned)
 - GitHub repo secrets:
   - `AWS_OIDC_ROLE_ARN`: IAM role ARN for GitHub OIDC

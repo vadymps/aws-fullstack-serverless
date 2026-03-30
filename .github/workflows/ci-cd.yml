@@ -6,7 +6,7 @@ on:
     branches: ["main"]
 
 jobs:
-  changes:
+  detect-changes:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -28,8 +28,8 @@ jobs:
               - 'backend/**'
 
   deploy-frontend:
-    needs: changes
-    if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.frontend == 'true' }}
+    needs: detect-changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.frontend == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -59,8 +59,8 @@ jobs:
         run: aws s3 sync frontend/dist s3://${{ secrets.AWS_S3_WEBAPP_BUCKET_NAME }} --delete --exclude "assets/config.json"
 
   deploy-backend:
-    needs: changes
-    if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.backend == 'true' }}
+    needs: detect-changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
