@@ -1,7 +1,7 @@
 resource "local_file" "webapp_config" {
   filename = abspath("${path.module}/../frontend/src/assets/config.auto.json")
   content = jsonencode({
-    apiUrl = aws_apigatewayv2_api.http.api_endpoint,
+    apiUrl = "/api"
     auth = {
       clientId              = local.cognito_client_id
       issuer                = local.cognito_issuer_url

@@ -40,6 +40,12 @@ resource "aws_apigatewayv2_route" "movies" {
   target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
 
+resource "aws_apigatewayv2_route" "movie_details" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "GET /movies/{id}"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+}
+
 resource "aws_apigatewayv2_route" "favorites" {
   api_id             = aws_apigatewayv2_api.http.id
   route_key          = "GET /favorites"

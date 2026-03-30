@@ -265,7 +265,7 @@ def lambda_handler(event, context):
     start = time.perf_counter()
     event = event or {}
     path = event.get("path") or event.get("rawPath") or "/"
-    # Support both API Gateway REST (httpMethod) and HTTP API v2 (requestContext.http.method).
+
     method = (
         event.get("httpMethod")
         or (event.get("requestContext") or {}).get("http", {}).get("method")
