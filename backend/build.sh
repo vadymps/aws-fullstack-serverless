@@ -16,7 +16,12 @@ rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"
 
 cp "$SRC_FILE" "$BUILD_DIR/app.py"
-python3 -m pip install --upgrade --target "$BUILD_DIR" "pymongo>=4.15.2" "dnspython>=2.6.1"
+python3 -m pip install --upgrade --target "$BUILD_DIR" \
+  --platform manylinux2014_x86_64 \
+  --only-binary=:all: \
+  --implementation cp \
+  --python-version 3.12 \
+  "pymongo>=4.15.2" "dnspython>=2.6.1" "pydantic>=2.0.0"
 
 cd "$BUILD_DIR"
 zip -r "$OUT_ZIP" .
