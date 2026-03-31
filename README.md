@@ -1,4 +1,4 @@
-# AWS Serverless Demo (Cheap + Minimal)
+# AWS Fullstack Serverless Movie Catalog Demo
 
 This repo will host a minimal AWS serverless demo with:
 - Angular frontend hosted on S3
@@ -6,6 +6,22 @@ This repo will host a minimal AWS serverless demo with:
 - MongoDB Atlas free tier
 - Terraform for AWS infrastructure
 - GitHub Actions CI/CD (OIDC, no long-lived keys)
+
+## About
+AWS Fullstack Serverless Movie Catalog: a lightweight Angular SPA backed by a
+serverless API, built to showcase a clean frontend experience with secure,
+scalable AWS services.
+
+![AWS movie catalog architecture](frontend/src/assets/aws-movie-catalog-architecture)
+
+### Architecture Summary
+- Frontend delivery: S3 static website with CloudFront acceleration. All non-API
+  routes are served by the S3 origin.
+- API layer: CloudFront routes `/api*` requests to an HTTP API in API Gateway,
+  with a Lambda function that strips the prefix before forwarding.
+- Auth & data: Cognito issues JWTs for protected routes. The Lambda function
+  uses a MongoDB connection string to fetch movie data. Favorites require a
+  valid token.
 
 ## Structure
 - `frontend/` Angular app (placeholder)

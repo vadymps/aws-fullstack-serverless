@@ -17,12 +17,12 @@ Requirements:
 
 From `backend/`:
 - `sam build --use-container --cached --skip-pull-image`
-- `sam local start-api --template-file .aws-sam/build/template.yaml`
+- `sam local start-api`
 
 For faster local iterations (keep Lambda container warm / "hot state"):
-- `sam local start-api --host 0.0.0.0 --template-file .aws-sam/build/template.yaml --warm-containers EAGER`
+- `sam local start-api --host 0.0.0.0 --warm-containers EAGER`
 - Use `LAZY` instead of `EAGER` if you want lower resource usage while still reducing repeated cold starts:
-- `sam local start-api --host 0.0.0.0 --template-file .aws-sam/build/template.yaml --warm-containers LAZY`
+- `sam local start-api --host 0.0.0.0 --warm-containers LAZY`
 
 Local API URL:
 - `http://127.0.0.1:3000`
@@ -53,7 +53,7 @@ Prereqs:
 
 Start SAM with debug args:
 - `sam build --use-container --cached --skip-pull-image`
-- `sam local start-api --host 0.0.0.0 --template-file .aws-sam/build/template.yaml --warm-containers LAZY --debug-port 5859 --debug-function BackendFunction --debug-args "-m debugpy --listen 0.0.0.0:5859 --wait-for-client"`
+- `sam local start-api --host 0.0.0.0 --warm-containers LAZY --debug-port 5859 --debug-function BackendFunction --debug-args "-m debugpy --listen 0.0.0.0:5859 --wait-for-client"`
 
 Attach flow:
 - Hit an endpoint once (for example `curl "http://127.0.0.1:3000/movies"`).

@@ -1,0 +1,49 @@
+<section class="about">
+  <header class="about-hero">
+    <p class="eyebrow">About</p>
+    <h1>AWS Fullstack Serverless Movie Catalog</h1>
+    <p class="lede">
+      This app is a lightweight Angular SPA backed by a serverless API, built to
+      showcase a clean frontend experience with secure, scalable AWS services.
+    </p>
+  </header>
+
+  <figure class="about-architecture">
+    <img
+      src="assets/aws-movie-catalog-architecture"
+      alt="AWS movie catalog architecture diagram"
+    />
+  </figure>
+
+  <div class="about-grid">
+    <article class="about-card">
+      <h2>Frontend Delivery</h2>
+      <p>
+        The single-page app is hosted on S3 as a static website and accelerated
+        globally by CloudFront.
+      </p>
+      <p class="note">All non-API routes are served by the S3 origin.</p>
+    </article>
+
+    <article class="about-card">
+      <h2>API Layer</h2>
+      <p>
+        CloudFront routes <span class="mono">/api*</span> requests to an HTTP API in
+        API Gateway, with a function that strips the prefix before forwarding.
+      </p>
+      <p class="note">
+        Routes include <span class="mono">/movies</span> and
+        <span class="mono">/favorites</span>.
+      </p>
+    </article>
+
+    <article class="about-card">
+      <h2>Auth &amp; Data</h2>
+      <p>
+        Cognito issues JWTs for protected routes. The Lambda function uses a
+        MongoDB connection string to fetch movie data.
+      </p>
+      <p class="note">Favorites require a valid token.</p>
+    </article>
+  </div>
+</section>
