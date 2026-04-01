@@ -13,6 +13,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 }
 
 .brand {
@@ -40,6 +41,11 @@
 }
 
 .user-name {
+  display: block;
+  max-width: min(40vw, 220px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-weight: 500;
   opacity: 0.9;
 }

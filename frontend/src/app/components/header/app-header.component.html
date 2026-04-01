@@ -5,6 +5,8 @@
     }
     <h1 class="brand">{{ pageTitle() }}</h1>
     <span class="toolbar-spacer"></span>
-    <span class="user-name">{{ auth.getUserDisplayName() }}</span>
+    <span class="user-name" [title]="auth.getUserDisplayName()">
+      {{ auth.getUserDisplayName() }}
+    </span>
   </div>
 </header>
