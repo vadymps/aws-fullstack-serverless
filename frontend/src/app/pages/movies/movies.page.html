@@ -1,7 +1,8 @@
 <div class="min-h-screen bg-slate-50 text-slate-900">
   <div class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 lg:flex-row lg:gap-8 lg:px-8">
     <section class="flex-1 space-y-6">
-      <header class="flex flex-col gap-4 rounded-3xl border border-indigo-100 bg-white p-6 shadow-xl shadow-indigo-100/50">
+      <header
+        class="flex flex-col gap-4 rounded-3xl border border-indigo-100 bg-white p-6 shadow-xl shadow-indigo-100/50">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 class="text-2xl font-semibold">Movie Catalog</h2>
@@ -12,13 +13,9 @@
           </div>
         </div>
         <div class="relative">
-          <input
-            type="search"
-            placeholder="Search by title..."
+          <input type="search" placeholder="Search by title..."
             class="movie-search-input w-full rounded-2xl border border-indigo-100 bg-white px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-            (input)="onSearchInput($any($event.target).value)"
-            (keyup)="onSearchInput($any($event.target).value)"
-          />
+            (input)="onSearchInput($any($event.target).value)" (keyup)="onSearchInput($any($event.target).value)" />
         </div>
       </header>
 
@@ -32,8 +29,7 @@
       <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         @for (item of [1, 2, 3, 4, 5, 6]; track item) {
         <div
-          class="flex flex-col gap-3 rounded-3xl border border-indigo-100 bg-white p-5 shadow-xl shadow-indigo-100/40"
-        >
+          class="flex flex-col gap-3 rounded-3xl border border-indigo-100 bg-white p-5 shadow-xl shadow-indigo-100/40">
           <div class="h-5 w-2/3 animate-pulse rounded-full bg-indigo-100"></div>
           <div class="h-4 w-1/2 animate-pulse rounded-full bg-indigo-100"></div>
           <div class="h-24 w-full animate-pulse rounded-2xl bg-indigo-100"></div>
@@ -48,29 +44,17 @@
         @for (movie of movies(); track movie._id) {
         <a [routerLink]="['/movies', movie._id]" [queryParams]="{ from: 'movies' }" class="block">
           <article
-            class="group relative rounded-3xl border border-indigo-100 bg-white p-5 shadow-xl shadow-indigo-100/40 transition duration-300 hover:scale-105 hover:border-indigo-400/60"
-          >
-            <button
-              type="button"
-              class="favorite-button"
-              [class.favorite-button--active]="isFavorite(movie._id)"
-              (click)="toggleFavorite($event, movie)"
-              aria-label="Toggle favorite"
-            >
+            class="group relative rounded-3xl border border-indigo-100 bg-white p-5 shadow-xl shadow-indigo-100/40 transition duration-300 hover:scale-105 hover:border-indigo-400/60">
+            <button type="button" class="favorite-button" [class.favorite-button--active]="isFavorite(movie._id)"
+              (click)="toggleFavorite($event, movie)" aria-label="Toggle favorite">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path
-                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 0.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                />
+                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 0.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
               </svg>
             </button>
             <div class="mb-4 overflow-hidden rounded-2xl border border-indigo-50 bg-indigo-50">
-              <img
-                [src]="movie.poster || 'assets/poster-placeholder.svg'"
-                [alt]="movie.title || 'Movie poster'"
-                class="w-full object-cover"
-                loading="lazy"
-                (error)="onPosterError($event)"
-              />
+              <img [src]="movie.poster || 'assets/poster-placeholder.svg'" [alt]="movie.title || 'Movie poster'"
+                class="w-full object-cover" loading="lazy" (error)="onPosterError($event)" />
             </div>
             <div class="flex items-center justify-between">
               <h3 class="text-lg font-semibold text-slate-900">
@@ -100,20 +84,14 @@
       </div>
 
       <div class="flex items-center justify-between pt-2 text-sm text-slate-500">
-        <button
-          type="button"
+        <button type="button"
           class="rounded-xl border border-indigo-100 bg-white px-4 py-2 text-slate-700 shadow-sm shadow-indigo-100/40 hover:border-indigo-300 disabled:opacity-50"
-          (click)="prevPage()"
-          [disabled]="loading() || page() <= 1"
-        >
+          (click)="prevPage()" [disabled]="loading() || page() <= 1">
           Previous
         </button>
-        <button
-          type="button"
+        <button type="button"
           class="rounded-xl border border-indigo-100 bg-white px-4 py-2 text-slate-700 shadow-sm shadow-indigo-100/40 hover:border-indigo-300 disabled:opacity-50"
-          (click)="nextPage()"
-          [disabled]="loading() || page() >= totalPages()"
-        >
+          (click)="nextPage()" [disabled]="loading() || page() >= totalPages()">
           Next
         </button>
       </div>

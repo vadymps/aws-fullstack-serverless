@@ -28,6 +28,18 @@ resource "aws_cloudfront_distribution" "site" {
     }
   }
 
+  origin {
+    domain_name = aws_s3_bucket.avatars.bucket_regional_domain_name
+    origin_id   = "${var.project_name}-avatars"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
   ordered_cache_behavior {
     path_pattern           = "/api*"
     target_origin_id       = "${var.project_name}-http-api"
@@ -43,6 +55,18 @@ resource "aws_cloudfront_distribution" "site" {
       event_type   = "viewer-request"
       function_arn = aws_cloudfront_function.strip_api_prefix.arn
     }
+  }
+
+  ordered_cache_behavior {
+    path_pattern           = "/avatars*"
+    target_origin_id       = "${var.project_name}-avatars"
+    viewer_protocol_policy = "redirect-to-https"
+
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    cached_methods   = ["GET", "HEAD", "OPTIONS"]
+    compress         = true
+    cache_policy_id  = data.aws_cloudfront_cache_policy.managed_caching_optimized.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.managed_cors_s3_origin.id
   }
 
   default_cache_behavior {

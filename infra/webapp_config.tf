@@ -5,8 +5,8 @@ resource "local_file" "webapp_config" {
     auth = {
       clientId              = local.cognito_client_id
       issuer                = local.cognito_issuer_url
-      redirectUri           = local.webapp_url
-      postLogoutRedirectUri = local.webapp_url
+      redirectUri           = local.cloudfront_url
+      postLogoutRedirectUri = local.cloudfront_url
       scope                 = local.cognito_scopes
     }
   })

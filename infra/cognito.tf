@@ -4,6 +4,32 @@ resource "aws_cognito_user_pool" "main" {
   username_attributes      = ["email"]
   auto_verified_attributes = ["email"]
 
+  schema {
+    name                = "given_name"
+    attribute_data_type = "String"
+    mutable             = true
+    required            = false
+  }
+
+  schema {
+    name                = "family_name"
+    attribute_data_type = "String"
+    mutable             = true
+    required            = false
+  }
+
+  schema {
+    name                = "picture"
+    attribute_data_type = "String"
+    mutable             = true
+    required            = false
+
+    string_attribute_constraints {
+      max_length = "2048"
+      min_length = "0"
+    }
+  }
+
   password_policy {
     minimum_length    = 8
     require_lowercase = true
@@ -27,10 +53,24 @@ resource "aws_cognito_user_pool_client" "frontend" {
 
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows                  = ["code"]
-  allowed_oauth_scopes                 = ["email", "openid", "profile"]
+  allowed_oauth_scopes = ["email","openid","profile","aws.cognito.signin.user.admin"]
 
-  callback_urls = [local.webapp_url, "http://localhost:4200"]
-  logout_urls   = [local.webapp_url, "http://localhost:4200"]
+  callback_urls = [local.cloudfront_url, "http://localhost:4200"]
+  logout_urls   = [local.cloudfront_url, "http://localhost:4200"]
+
+  read_attributes = [
+    "email",
+    "given_name",
+    "family_name",
+    "picture"
+  ]
+
+  write_attributes = [
+    "email",
+    "given_name",
+    "family_name",
+    "picture"
+  ]
 
   supported_identity_providers = ["COGNITO"]
 }

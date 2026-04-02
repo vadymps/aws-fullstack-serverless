@@ -13,14 +13,68 @@
 } @else if (authorized()) {
   <main class="card">
     <div class="profile-header">
-      <div class="profile-avatar">{{ auth.getUserInitials() }}</div>
+      @if (pictureUrl()) {
+        <div class="profile-avatar profile-avatar--image">
+          <img [src]="pictureUrl()" alt="Profile avatar" />
+        </div>
+      } @else {
+        <div class="profile-avatar">{{ auth.getUserInitials() }}</div>
+      }
       <div>
         <h1>{{ auth.getUserDisplayName() }}</h1>
         <p class="muted">{{ auth.getUserEmail() || 'Email not available' }}</p>
       </div>
     </div>
 
+        <form [formGroup]="profileForm" class="profile-details">
+      <div class="field">
+        <label for="givenName">First name</label>
+          <input
+            id="givenName"
+            type="text"
+            formControlName="givenName"
+            placeholder="Enter your first name"
+          />
+      </div>
+
+      <div class="field">
+        <label for="familyName">Family name</label>
+          <input
+            id="familyName"
+            type="text"
+            formControlName="familyName"
+            placeholder="Enter your family name"
+          />
+      </div>
+
+      <div class="field">
+        <label for="pictureUpload">Profile picture</label>
+        <input
+          id="pictureUpload"
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          (change)="handleFileChange($event)"
+        />
+        <p class="hint muted">Max size 5MB. PNG, JPG, or WebP.</p>
+      </div>
+        </form>
+
+    @if (loadingProfile()) {
+      <p class="status muted">Loading profile...</p>
+    }
+
+    @if (errorMessage()) {
+      <p class="status status-error">{{ errorMessage() }}</p>
+    }
+
+    @if (successMessage()) {
+      <p class="status status-success">{{ successMessage() }}</p>
+    }
+
     <div class="profile-actions">
+      <button class="btn btn-primary" type="button" (click)="saveProfile()" [disabled]="savingProfile()">
+        {{ savingProfile() ? 'Saving...' : 'Save profile' }}
+      </button>
       <button class="btn btn-outline" type="button" (click)="auth.logout()">
         Sign out
       </button>
