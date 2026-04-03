@@ -97,10 +97,15 @@ h2 {
 
 .field input[type="text"],
 .field input[type="file"] {
+  width: 100%;
+  box-sizing: border-box;
   padding: 0.6rem 0.75rem;
   border-radius: 10px;
   border: 1px solid #d1d5db;
   font-size: 0.95rem;
+  font-family: inherit;
+  background: #fff;
+  color: #111827;
 }
 
 .field input[type="text"]:focus,
@@ -108,6 +113,21 @@ h2 {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.field input[type="file"]::file-selector-button {
+  margin-right: 0.75rem;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.45rem 0.85rem;
+  font-weight: 600;
+  background: #e0e7ff;
+  color: #1e3a8a;
+  cursor: pointer;
+}
+
+.field input[type="file"]::file-selector-button:hover {
+  background: #c7d2fe;
 }
 
 .hint {
