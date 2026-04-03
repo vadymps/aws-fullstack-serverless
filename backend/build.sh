@@ -16,6 +16,8 @@ rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"
 
 cp "$SRC_FILE" "$BUILD_DIR/app.py"
+cp -r "$ROOT_DIR/backend/src/services" "$BUILD_DIR/"
+cp -r "$ROOT_DIR/backend/src/shared" "$BUILD_DIR/"
 python3 -m pip install --upgrade --target "$BUILD_DIR" \
   --platform manylinux2014_x86_64 \
   --only-binary=:all: \

@@ -30,6 +30,7 @@ Resources:
           MONGODB_URI: "mongodb+srv://<USERNAME>:<PASSWORD>@aws-fullstack-serverles.n8copxl.mongodb.net"
           MONGODB_DB: "sample_mflix"
           AVATARS_BUCKET: "aws-fullstack-serverless-user-avatars"
+          CLOUDFRONT_URL: "https://example.cloudfront.net"
       Events:
         Root:
           Type: HttpApi

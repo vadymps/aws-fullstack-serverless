@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from bson import ObjectId
 from typing import Any, Dict
+from datetime import datetime
 
 from .constants import MONGODB_URI, MONGODB_DB
 
@@ -28,6 +29,8 @@ def normalize_movie_doc(doc: Dict[str, Any]) -> Dict[str, Any]:
     for key, value in doc.items():
         if key == "_id":
             normalized["_id"] = str(value)
+        elif isinstance(value, datetime):
+            normalized[key] = value.isoformat()
         else:
             normalized[key] = value
     
@@ -40,18 +43,19 @@ def normalize_movie_doc(doc: Dict[str, Any]) -> Dict[str, Any]:
 def normalize_favorite_doc(doc: Dict[str, Any]) -> Dict[str, Any]:
     if not doc:
         return {}
-    
+
     normalized = {}
     for key, value in doc.items():
         if key == "_id":
             normalized["_id"] = str(value)
-        elif key == "movie" and isinstance(value, dict):
-            normalized[key] = {}
-            for movie_key, movie_value in value.items():
-                if movie_key == "_id":
-                    normalized[key][movie_key] = str(movie_value)
-                else:
-                    normalized[key][movie_key] = movie_value
+        elif isinstance(value, ObjectId):
+            normalized[key] = str(value)
+        elif isinstance(value, datetime):
+            normalized[key] = value.isoformat()
         else:
             normalized[key] = value
+
+    if not normalized.get("poster"):
+        normalized["poster"] = "assets/poster-placeholder.svg"
+
     return normalized

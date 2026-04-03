@@ -1,12 +1,17 @@
-export type Favorite = {
-  _id: string;
-  movie_id: string;
+export type MovieSummary = {
+  _id?: string;
   title?: string;
   year?: number;
   genres?: string[];
   runtime?: number;
   poster?: string;
+};
+
+export type Favorite = MovieSummary & {
+  _id: string;
+  movie_id: string;
   created_at?: string;
+  movie?: MovieSummary;
 };
 
 export type FavoritesResponse = {

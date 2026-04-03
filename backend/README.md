@@ -24,6 +24,8 @@ For faster local iterations (keep Lambda container warm / "hot state"):
 - Use `LAZY` instead of `EAGER` if you want lower resource usage while still reducing repeated cold starts:
 - `sam local start-api --host 0.0.0.0 --warm-containers LAZY`
 
+- `AWS_PROFILE=dev sam local start-api --host 0.0.0.0 --warm-containers LAZY --region eu-central-1`
+
 Local API URL:
 - `http://127.0.0.1:3000`
 

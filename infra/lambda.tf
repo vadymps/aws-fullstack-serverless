@@ -58,6 +58,7 @@ resource "aws_lambda_function" "lambda" {
       MONGODB_URI    = var.mongodb_uri
       MONGODB_DB     = "sample_mflix"
       AVATARS_BUCKET = local.s3_avatars_bucket
+      CLOUDFRONT_URL = local.cloudfront_url
     }
   }
 }

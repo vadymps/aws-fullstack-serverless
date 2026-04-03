@@ -29,15 +29,9 @@ resource "aws_cloudfront_distribution" "site" {
   }
 
   origin {
-    domain_name = aws_s3_bucket.avatars.bucket_regional_domain_name
-    origin_id   = "${var.project_name}-avatars"
-
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
+    domain_name              = aws_s3_bucket.avatars.bucket_regional_domain_name
+    origin_id                = "${var.project_name}-avatars"
+    origin_access_control_id = aws_cloudfront_origin_access_control.default.id
   }
 
   ordered_cache_behavior {
@@ -45,10 +39,10 @@ resource "aws_cloudfront_distribution" "site" {
     target_origin_id       = "${var.project_name}-http-api"
     viewer_protocol_policy = "redirect-to-https"
 
-    allowed_methods  = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-    cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    compress         = true
-    cache_policy_id  = data.aws_cloudfront_cache_policy.managed_caching_disabled.id
+    allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods           = ["GET", "HEAD", "OPTIONS"]
+    compress                 = true
+    cache_policy_id          = data.aws_cloudfront_cache_policy.managed_caching_disabled.id
     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.managed_all_viewer_except_host_header.id
 
     function_association {
@@ -62,10 +56,10 @@ resource "aws_cloudfront_distribution" "site" {
     target_origin_id       = "${var.project_name}-avatars"
     viewer_protocol_policy = "redirect-to-https"
 
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    compress         = true
-    cache_policy_id  = data.aws_cloudfront_cache_policy.managed_caching_optimized.id
+    allowed_methods          = ["GET", "HEAD", "OPTIONS"]
+    cached_methods           = ["GET", "HEAD", "OPTIONS"]
+    compress                 = true
+    cache_policy_id          = data.aws_cloudfront_cache_policy.managed_caching_optimized.id
     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.managed_cors_s3_origin.id
   }
 
@@ -73,10 +67,10 @@ resource "aws_cloudfront_distribution" "site" {
     target_origin_id       = "${var.project_name}-s3-website"
     viewer_protocol_policy = "redirect-to-https"
 
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    compress         = true
-    cache_policy_id  = data.aws_cloudfront_cache_policy.managed_caching_optimized.id
+    allowed_methods          = ["GET", "HEAD", "OPTIONS"]
+    cached_methods           = ["GET", "HEAD", "OPTIONS"]
+    compress                 = true
+    cache_policy_id          = data.aws_cloudfront_cache_policy.managed_caching_optimized.id
     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.managed_cors_s3_origin.id
   }
 
@@ -89,6 +83,14 @@ resource "aws_cloudfront_distribution" "site" {
   viewer_certificate {
     cloudfront_default_certificate = true
   }
+}
+
+resource "aws_cloudfront_origin_access_control" "default" {
+  name                              = "${var.project_name}-avatars-oac"
+  description                       = "OAC for avatars S3 bucket"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
 }
 
 data "aws_cloudfront_cache_policy" "managed_caching_disabled" {

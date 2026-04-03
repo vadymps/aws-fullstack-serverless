@@ -81,23 +81,20 @@ export class AuthService {
     return this.oauthService.getAccessToken();
   }
 
+  getIdTokenClaims(): Record<string, unknown> | null {
+    return this.oauthService.getIdentityClaims() as Record<string, unknown> | null;
+  }
+
   getUserDisplayName(): string {
     const claims = this.oauthService.getIdentityClaims() as Record<string, unknown> | null;
     if (!claims) {
       return 'Guest';
     }
 
-    const raw =
-      claims['name'] ??
-      claims['preferred_username'] ??
-      claims['email'] ??
-      claims['cognito:username'];
+    const name = `${claims['given_name']} ${claims['family_name']}`.trim();
+    const email = `${claims['email']}`.trim();
 
-    if (typeof raw === 'string' && raw.trim().length > 0) {
-      return raw.trim();
-    }
-
-    return 'User';
+    return name || email || 'User';
   }
 
   getUserEmail(): string {

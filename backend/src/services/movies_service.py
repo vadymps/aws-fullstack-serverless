@@ -53,6 +53,8 @@ def get_movies(page: int, query: str = None) -> Dict[str, Any]:
         movies.append(movie.model_dump(by_alias=True))
 
     return {
+        "ok": True,
+        "path": "/movies",
         "page": page,
         "page_size": DEFAULT_PAGE_SIZE,
         "total": total,

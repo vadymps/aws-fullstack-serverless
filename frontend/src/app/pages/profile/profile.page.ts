@@ -31,20 +31,12 @@ export class ProfilePageComponent implements OnInit {
   private selectedFile: File | null = null;
 
   ngOnInit(): void {
-    console.log('Profile component initializing...');
-    
-    // Don't wait - start auth initialization and handle state when ready
     this.auth.init().then(() => {
-      console.log('Auth init completed');
-      console.log('Is authenticated:', this.auth.isAuthenticated());
-
       if (this.auth.isAuthenticated()) {
-        console.log('User is authenticated, setting authorized=true, checking=false');
         this.authorized.set(true);
         this.checking.set(false);
         this.loadProfile();
       } else {
-        console.log('User is not authenticated, setting checking=false');
         this.checking.set(false);
       }
     });
@@ -59,14 +51,21 @@ export class ProfilePageComponent implements OnInit {
     this.errorMessage.set('');
 
     try {
-      const response = await firstValueFrom(this.profileService.getProfile());
-      if (response?.data) {
-        this.profileForm.patchValue({
-          givenName: response.data.given_name || '',
-          familyName: response.data.family_name || ''
-        });
-        this.pictureUrl.set(response.data.picture || '');
+      const claims = this.auth.getIdTokenClaims();
+      if (!claims) {
+        this.errorMessage.set('Unable to load your profile. Please try again.');
+        return;
       }
+
+      const givenName = typeof claims['given_name'] === 'string' ? claims['given_name'] : '';
+      const familyName = typeof claims['family_name'] === 'string' ? claims['family_name'] : '';
+      const picture = typeof claims['picture'] === 'string' ? claims['picture'] : '';
+
+      this.profileForm.patchValue({
+        givenName,
+        familyName
+      });
+      this.pictureUrl.set(picture);
     } catch (err) {
       this.errorMessage.set('Unable to load your profile. Please try again.');
     } finally {

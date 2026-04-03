@@ -1,25 +1,12 @@
-import boto3
 from typing import Any, Dict, List
 
-from shared.aws_clients import get_cognito_client, get_s3_client
-from shared.constants import AVATARS_BUCKET
-from shared.auth_utils import get_scopes, get_user_profile_data, get_claims, get_bearer_token
+from shared.aws_clients import get_s3_client
+from shared.constants import AVATARS_BUCKET, CLOUDFRONT_URL
+from shared.auth_utils import get_user_profile_data, get_bearer_token
 from shared.event_utils import parse_body, coerce_avatar_payload
 
 def get_profile(event: Dict[str, Any]) -> Dict[str, Any]:
-    cognito = get_cognito_client()
-    token = get_bearer_token(event)
-    response = cognito.get_user(AccessToken=token)
-    user_attrs = { attr['Name']: attr['Value'] for attr in response['UserAttributes'] }
-    claims = get_claims(event)      
-    return {
-        "email": user_attrs.get("email", ""),
-        "given_name": user_attrs.get("given_name", ""),
-        "family_name": user_attrs.get("family_name", ""),
-        "picture": user_attrs.get("picture", ""),
-        "user_id": response.get("Username"),
-        "scopes": get_scopes(claims)
-        }
+    return get_user_profile_data(event)
 
 import time
 from typing import Any, Dict, List

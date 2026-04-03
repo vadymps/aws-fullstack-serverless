@@ -38,6 +38,12 @@ data "aws_iam_policy_document" "avatars" {
       identifiers = ["cloudfront.amazonaws.com"]
     }
     resources = ["${aws_s3_bucket.avatars.arn}/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+      values   = [aws_cloudfront_distribution.site.arn]
+    }
   }
 }
 
