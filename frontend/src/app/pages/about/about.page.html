@@ -1,49 +1,52 @@
-<section class="about">
-  <header class="about-hero">
-    <p class="eyebrow">About</p>
-    <h1>AWS Fullstack Serverless Movie Catalog</h1>
-    <p class="lede">
+<section class="mx-auto max-w-6xl px-4 py-10 lg:px-10">
+  <header class="grid gap-3">
+    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">About</p>
+    <h1 class="text-3xl font-semibold text-slate-900 sm:text-4xl">
+      AWS Fullstack Serverless Movie Catalog
+    </h1>
+    <p class="text-base text-slate-500">
       This app is a lightweight Angular SPA backed by a serverless API, built to
       showcase a clean frontend experience with secure, scalable AWS services.
     </p>
   </header>
 
-  <figure class="about-architecture">
+  <figure class="mt-6 overflow-hidden rounded-[12px] bg-white shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
     <img
-      src="assets/aws-movie-catalog-architecture"
+      src="assets/aws-movie-catalog-architecture.png"
       alt="AWS movie catalog architecture diagram"
+      class="w-full"
     />
   </figure>
 
-  <div class="about-grid">
-    <article class="about-card">
-      <h2>Frontend Delivery</h2>
-      <p>
+  <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <article class="rounded-[12px] bg-white p-6 shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
+      <h2 class="text-lg font-semibold text-slate-900">Frontend Delivery</h2>
+      <p class="mt-2 text-sm text-slate-500">
         The single-page app is hosted on S3 as a static website and accelerated
         globally by CloudFront.
       </p>
-      <p class="note">All non-API routes are served by the S3 origin.</p>
+      <p class="mt-3 text-sm text-slate-400">All non-API routes are served by the S3 origin.</p>
     </article>
 
-    <article class="about-card">
-      <h2>API Layer</h2>
-      <p>
-        CloudFront routes <span class="mono">/api*</span> requests to an HTTP API in
-        API Gateway, with a function that strips the prefix before forwarding.
+    <article class="rounded-[12px] bg-white p-6 shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
+      <h2 class="text-lg font-semibold text-slate-900">API Layer</h2>
+      <p class="mt-2 text-sm text-slate-500">
+        CloudFront routes <span class="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-600">/api*</span>
+        requests to an HTTP API in API Gateway, with a function that strips the prefix before forwarding.
       </p>
-      <p class="note">
-        Routes include <span class="mono">/movies</span> and
-        <span class="mono">/favorites</span>.
+      <p class="mt-3 text-sm text-slate-400">
+        Routes include <span class="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-600">/movies</span> and
+        <span class="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-600">/favorites</span>.
       </p>
     </article>
 
-    <article class="about-card">
-      <h2>Auth &amp; Data</h2>
-      <p>
+    <article class="rounded-[12px] bg-white p-6 shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
+      <h2 class="text-lg font-semibold text-slate-900">Auth &amp; Data</h2>
+      <p class="mt-2 text-sm text-slate-500">
         Cognito issues JWTs for protected routes. The Lambda function uses a
         MongoDB connection string to fetch movie data.
       </p>
-      <p class="note">Favorites require a valid token.</p>
+      <p class="mt-3 text-sm text-slate-400">Favorites require a valid token.</p>
     </article>
   </div>
 </section>

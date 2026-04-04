@@ -1,12 +1,31 @@
-<header class="app-toolbar">
-  <div class="toolbar-inner">
+<header class="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur">
+  <div class="mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3 lg:px-8">
     @if (showMenu) {
-      <button class="menu-button" type="button" (click)="menuClick.emit()">Menu</button>
+      <button
+        type="button"
+        class="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-[0_6px_14px_rgba(0,0,0,0.05)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(0,0,0,0.08)]"
+        aria-label="Open menu"
+        (click)="menuClick.emit()"
+      >
+        <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
+          <path
+            d="M4 6h16M4 12h16M4 18h16"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.7"
+          />
+        </svg>
+      </button>
+    } @else {
+      <span class="h-9 w-9"></span>
     }
-    <h1 class="brand">{{ pageTitle() }}</h1>
-    <span class="toolbar-spacer"></span>
-    <span class="user-name" [title]="auth.getUserDisplayName()">
-      {{ auth.getUserDisplayName() }}
-    </span>
+
+    <h1 class="text-center text-2xl font-semibold text-slate-900 sm:text-2xl">
+      {{ pageTitle() }}
+    </h1>
+
+    <span class="h-9 w-9"></span>
   </div>
 </header>

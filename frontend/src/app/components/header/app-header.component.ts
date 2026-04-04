@@ -40,6 +40,12 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
       this.pageTitle.set('Profile');
     } else if (path.startsWith('login')) {
       this.pageTitle.set('Login');
+    } else if (path.startsWith('favorites')) {
+      this.pageTitle.set('Favorites');
+    } else if (path.startsWith('about')) {
+      this.pageTitle.set('About');
+    } else if (path.startsWith('movies/') || path.startsWith('movie/')) {
+      this.pageTitle.set('Movie');
     } else {
       this.pageTitle.set('Movies');
     }

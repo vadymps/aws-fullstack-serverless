@@ -12,7 +12,7 @@ AWS Fullstack Serverless Movie Catalog: a lightweight Angular SPA backed by a
 serverless API, built to showcase a clean frontend experience with secure,
 scalable AWS services.
 
-![AWS movie catalog architecture](frontend/src/assets/aws-movie-catalog-architecture)
+![AWS movie catalog architecture](frontend/src/assets/aws-movie-catalog-architecture.png)
 
 ### Architecture Summary
 - Frontend delivery: S3 static website with CloudFront acceleration. All non-API

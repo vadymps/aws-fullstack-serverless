@@ -1,102 +1,176 @@
 @if (checking()) {
-  <section class="skeleton-shell">
-    <div class="skeleton-card">
-      <div class="skeleton-avatar"></div>
-      <div class="skeleton-lines">
-        <div class="skeleton-line skeleton-line--wide"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
+  <section class="flex justify-center px-4 py-10">
+    <div class="w-full max-w-xl rounded-[12px] bg-white p-6 shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
+      <div class="flex flex-col gap-6">
+        <div class="h-16 w-16 animate-pulse rounded-full bg-slate-200/70"></div>
+        <div class="space-y-3">
+          <div class="h-5 w-2/3 animate-pulse rounded-full bg-slate-200/70"></div>
+          <div class="h-4 w-1/2 animate-pulse rounded-full bg-slate-200/70"></div>
+          <div class="h-4 w-3/4 animate-pulse rounded-full bg-slate-200/70"></div>
+        </div>
+        <p class="text-sm text-slate-400">Checking your session...</p>
       </div>
-      <p class="skeleton-message">Checking your session...</p>
     </div>
   </section>
 } @else if (authorized()) {
-  <main class="card">
-    <div class="profile-header">
-      @if (pictureUrl()) {
-        <div class="profile-avatar profile-avatar--image">
-          <img [src]="pictureUrl()" alt="Profile avatar" />
+  <section class="flex justify-center px-4 py-10">
+    <main class="w-full max-w-xl rounded-[12px] bg-white p-6 shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
+      <div class="flex flex-col items-center gap-4 text-center">
+        <div class="relative">
+          @if (pictureUrl()) {
+            <img
+              [src]="pictureUrl()"
+              alt="Profile avatar"
+              class="h-32 w-32 rounded-full object-cover shadow-[0_12px_24px_rgba(0,0,0,0.1)]"
+            />
+          } @else {
+            <div
+              class="flex h-32 w-32 items-center justify-center rounded-full bg-slate-900 text-2xl font-semibold text-white shadow-[0_12px_24px_rgba(0,0,0,0.12)]"
+            >
+              {{ auth.getUserInitials() }}
+            </div>
+          }
+          <button
+            type="button"
+            class="absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-[0_8px_16px_rgba(0,0,0,0.12)] transition hover:-translate-y-0.5 disabled:opacity-60"
+            aria-label="Edit profile picture"
+            (click)="pictureInput.click()"
+            [disabled]="savingPicture()"
+          >
+            <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
+              <path
+                d="M12 5a7 7 0 1 0 7 7"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-width="1.6"
+              />
+              <path
+                d="M15.5 5.5 18.5 8.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-width="1.6"
+              />
+              <path
+                d="M14 7l4 4-6 2 2-6z"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.6"
+              />
+            </svg>
+          </button>
+          <input
+            #pictureInput
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            class="hidden"
+            (change)="handlePictureChange($event)"
+          />
         </div>
-      } @else {
-        <div class="profile-avatar">{{ auth.getUserInitials() }}</div>
-      }
-      <div>
-        <h1>{{ auth.getUserDisplayName() }}</h1>
-        <p class="muted">{{ auth.getUserEmail() || 'Email not available' }}</p>
+        <p class="text-xs text-slate-400">Max size 5MB. PNG, JPG, or WebP.</p>
       </div>
-    </div>
 
-        <form [formGroup]="profileForm" class="profile-details">
-      <div class="field">
-        <label for="givenName">First name</label>
+      <form [formGroup]="profileForm" class="mt-6 grid gap-4">
+        <div class="grid gap-2">
+          <label for="givenName" class="text-sm font-semibold text-slate-700">First name</label>
           <input
             id="givenName"
             type="text"
             formControlName="givenName"
             placeholder="Enter your first name"
+            class="w-full rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200"
           />
-      </div>
+        </div>
 
-      <div class="field">
-        <label for="familyName">Family name</label>
+        <div class="grid gap-2">
+          <label for="familyName" class="text-sm font-semibold text-slate-700">Family name</label>
           <input
             id="familyName"
             type="text"
             formControlName="familyName"
             placeholder="Enter your family name"
+            class="w-full rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200"
           />
-      </div>
+        </div>
 
-      <div class="field">
-        <label for="pictureUpload">Profile picture</label>
-        <input
-          id="pictureUpload"
-          type="file"
-          accept="image/png,image/jpeg,image/webp"
-          (change)="handleFileChange($event)"
-        />
-        <p class="hint muted">Max size 5MB. PNG, JPG, or WebP.</p>
-      </div>
-        </form>
+        <div class="grid gap-2">
+          <label for="email" class="text-sm font-semibold text-slate-700">Email</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="Email"
+            class="w-full rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200"
+          />
+        </div>
+      </form>
 
-    @if (loadingProfile()) {
-      <p class="status muted">Loading profile...</p>
-    }
+      @if (loadingProfile()) {
+        <p class="mt-4 text-sm font-medium text-slate-400">Loading profile...</p>
+      }
 
-    @if (errorMessage()) {
-      <p class="status status-error">{{ errorMessage() }}</p>
-    }
-
-    @if (successMessage()) {
-      <p class="status status-success">{{ successMessage() }}</p>
-    }
-
-    <div class="profile-actions">
-      <button class="btn btn-primary" type="button" (click)="saveProfile()" [disabled]="savingProfile()">
-        {{ savingProfile() ? 'Saving...' : 'Save profile' }}
-      </button>
-      <button class="btn btn-outline" type="button" (click)="auth.logout()">
-        Sign out
-      </button>
-    </div>
-  </main>
-} @else {
-  <main class="card login-card">
-    <div class="profile-header">
-      <div class="profile-avatar">??</div>
-      <div>
-        <h1>Sign in</h1>
-        <p class="muted">Use your account to access your profile.</p>
-      </div>
-    </div>
-
-    <form class="login-form" novalidate>
-      <div class="profile-actions">
-        <button class="btn btn-primary" type="button" (click)="login()">
-          Continue with Cognito
+      <div class="mt-6 grid gap-3">
+        <button
+          class="rounded-full bg-blue-700 px-6 py-2 text-sm font-semibold text-white shadow-[0_8px_18px_rgba(37,99,235,0.35)] transition hover:-translate-y-0.5 hover:bg-blue-800 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none disabled:hover:translate-y-0"
+          type="button"
+          (click)="saveProfile()"
+          [disabled]="savingProfile() || (profileForm.pristine && !pendingPicture())"
+        >
+          {{ savingProfile() ? 'Saving...' : 'Save profile' }}
+        </button>
+        <button
+          class="rounded-full border border-blue-300 bg-white px-6 py-2 text-sm font-semibold text-blue-700 shadow-[0_6px_14px_rgba(37,99,235,0.15)] transition hover:-translate-y-0.5 hover:bg-blue-50"
+          type="button"
+          (click)="auth.logout()"
+        >
+          Sign out
         </button>
       </div>
-      <p class="login-helper muted">You will be redirected to the Cognito hosted sign-in.</p>
-    </form>
-  </main>
+
+      @if (notificationMessage()) {
+        <app-snackbar
+          [message]="notificationMessage()"
+          [type]="notificationType() === 'success' ? 'success' : 'error'"
+          (close)="closeNotification()"
+        ></app-snackbar>
+      }
+    </main>
+  </section>
+} @else {
+  <section class="flex justify-center px-4 py-10">
+    <main class="w-full max-w-3xl rounded-[12px] bg-white p-6 text-center shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
+      <div class="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-slate-100 shadow-[0_10px_24px_rgba(0,0,0,0.08)]">
+        <div class="relative">
+          <svg viewBox="0 0 24 24" class="h-14 w-14 text-slate-400" aria-hidden="true">
+            <path
+              d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4 0-7 2-7 5v1h14v-1c0-3-3-5-7-5Z"
+              fill="currentColor"
+            />
+          </svg>
+          <span class="absolute -bottom-2 -right-2 flex h-9 w-9 items-center justify-center rounded-full bg-white text-base font-semibold text-slate-400 shadow-[0_8px_16px_rgba(0,0,0,0.12)]">
+            ?
+          </span>
+        </div>
+      </div>
+
+      <h1 class="mt-6 text-xl font-semibold text-slate-900">You are not signed in</h1>
+      <p class="mt-2 text-sm text-slate-500">
+        Sign in to access and manage your profile and data.
+      </p>
+
+      <button
+        class="mt-6 rounded-full bg-blue-700 px-8 py-2 text-sm font-semibold text-white shadow-[0_8px_18px_rgba(37,99,235,0.35)] transition hover:-translate-y-0.5 hover:bg-blue-800"
+        type="button"
+        (click)="login()"
+      >
+        Proceed to Sign-In
+      </button>
+      <p class="mt-3 text-xs text-slate-400">
+        You will be redirected to the secure login page.
+      </p>
+    </main>
+  </section>
 }

@@ -4,9 +4,10 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { ProfileService } from '../../services/profile.service';
+import { AppSnackbarComponent } from '../../components/snackbar/app-snackbar.component';
 
 @Component({
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AppSnackbarComponent],
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.css'],
   standalone: true,
@@ -20,15 +21,19 @@ export class ProfilePageComponent implements OnInit {
   public checking = signal(true);
   public loadingProfile = signal(false);
   public savingProfile = signal(false);
-  public errorMessage = signal('');
-  public successMessage = signal('');
+  public savingPicture = signal(false);
+  public pendingPicture = signal(false);
+  public notificationMessage = signal('');
+  public notificationType = signal<'success' | 'error' | ''>('');
   public pictureUrl = signal('');
+  private notificationTimer: ReturnType<typeof setTimeout> | null = null;
 
   public profileForm: FormGroup = this.fb.group({
     givenName: ['', Validators.required],
-    familyName: ['', Validators.required]
+    familyName: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]]
   });
-  private selectedFile: File | null = null;
+  private pendingPictureFile: File | null = null;
 
   ngOnInit(): void {
     this.auth.init().then(() => {
@@ -48,35 +53,54 @@ export class ProfilePageComponent implements OnInit {
 
   async loadProfile(): Promise<void> {
     this.loadingProfile.set(true);
-    this.errorMessage.set('');
 
     try {
       const claims = this.auth.getIdTokenClaims();
       if (!claims) {
-        this.errorMessage.set('Unable to load your profile. Please try again.');
+        this.showNotification('Unable to load your profile. Please try again.', 'error');
         return;
       }
 
       const givenName = typeof claims['given_name'] === 'string' ? claims['given_name'] : '';
       const familyName = typeof claims['family_name'] === 'string' ? claims['family_name'] : '';
       const picture = typeof claims['picture'] === 'string' ? claims['picture'] : '';
+      const email = typeof claims['email'] === 'string' ? claims['email'] : '';
 
       this.profileForm.patchValue({
         givenName,
-        familyName
+        familyName,
+        email
       });
       this.pictureUrl.set(picture);
     } catch (err) {
-      this.errorMessage.set('Unable to load your profile. Please try again.');
+      this.showNotification('Unable to load your profile. Please try again.', 'error');
     } finally {
       this.loadingProfile.set(false);
     }
   }
 
-  handleFileChange(event: Event): void {
+  handlePictureChange(event: Event): void {
     const input = event.target as HTMLInputElement | null;
     const file = input?.files?.[0] ?? null;
-    this.selectedFile = file;
+    if (!file) {
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+    this.showNotification('Image must be 5MB or smaller.', 'error');
+    return;
+    }
+
+    this.clearNotification();
+    this.pendingPictureFile = file;
+    this.pendingPicture.set(true);
+
+    const previewUrl = URL.createObjectURL(file);
+    this.pictureUrl.set(previewUrl);
+
+    if (input) {
+      input.value = '';
+    }
   }
 
   async saveProfile(): Promise<void> {
@@ -84,54 +108,67 @@ export class ProfilePageComponent implements OnInit {
       return;
     }
 
-    if (this.profileForm.invalid) {
-      this.errorMessage.set('Please fill in all required fields.');
+    const hasFormChanges = this.profileForm.dirty;
+    const hasPictureChange = Boolean(this.pendingPictureFile);
+    if (!hasFormChanges && !hasPictureChange) {
       return;
     }
 
-    this.errorMessage.set('');
-    this.successMessage.set('');
+    if (hasFormChanges && this.profileForm.invalid) {
+    this.showNotification('Please fill in all required fields.', 'error');
+    return;
+    }
+
+    this.clearNotification();
 
     try {
-      const payload: {
-        given_name?: string;
-        family_name?: string;
-        picture_base64?: string;
-        picture_name?: string;
-        picture_type?: string;
-      } = {
-        given_name: this.profileForm.value.givenName?.trim(),
-        family_name: this.profileForm.value.familyName?.trim(),
-      };
-
-      if (this.selectedFile) {
-        if (this.selectedFile.size > 5 * 1024 * 1024) {
-          this.errorMessage.set('Image must be 5MB or smaller.');
-          return;
-        }
-
-        const dataUrl = await this.readFileAsDataUrl(this.selectedFile);
-        payload.picture_base64 = dataUrl;
-        payload.picture_name = this.selectedFile.name;
-        payload.picture_type = this.selectedFile.type;
-      }
-
       this.savingProfile.set(true);
-      const response = await firstValueFrom(this.profileService.updateProfile(payload));
-      if (response?.data) {
-        this.profileForm.patchValue({
-          givenName: response.data.given_name || '',
-          familyName: response.data.family_name || ''
-        });
-        this.pictureUrl.set(response.data.picture || '');
+
+      if (hasFormChanges) {
+        const payload = {
+          given_name: this.profileForm.value.givenName?.trim(),
+          family_name: this.profileForm.value.familyName?.trim(),
+          email: this.profileForm.value.email?.trim(),
+        };
+        const response = await firstValueFrom(this.profileService.updateProfile(payload));
+        if (response?.data) {
+          this.profileForm.patchValue({
+            givenName: response.data.given_name || '',
+            familyName: response.data.family_name || '',
+            email: response.data.email || ''
+          });
+          this.profileForm.markAsPristine();
+        }
       }
-      this.selectedFile = null;
-      this.successMessage.set('Profile updated.');
+
+      if (hasPictureChange && this.pendingPictureFile) {
+        const dataUrl = await this.readFileAsDataUrl(this.pendingPictureFile);
+        this.savingPicture.set(true);
+        const response = await firstValueFrom(
+          this.profileService.updateProfilePicture({
+            picture_base64: dataUrl,
+            picture_name: this.pendingPictureFile.name,
+            picture_type: this.pendingPictureFile.type
+          })
+        );
+        if (response?.data) {
+          this.pictureUrl.set(response.data.picture || '');
+        }
+        this.pendingPictureFile = null;
+        this.pendingPicture.set(false);
+      }
+
+      this.showNotification('Profile updated.', 'success');
     } catch (err) {
-      this.errorMessage.set('Unable to update profile. Please try again.');
+      this.showNotification('Unable to update profile. Please try again.', 'error');
     } finally {
       this.savingProfile.set(false);
+      this.savingPicture.set(false);
     }
+  }
+
+  closeNotification(): void {
+    this.clearNotification();
   }
 
   private readFileAsDataUrl(file: File): Promise<string> {
@@ -141,5 +178,29 @@ export class ProfilePageComponent implements OnInit {
       reader.onerror = () => reject(new Error('Failed to read file'));
       reader.readAsDataURL(file);
     });
+  }
+
+  private showNotification(message: string, type: 'success' | 'error'): void {
+    this.notificationMessage.set(message);
+    this.notificationType.set(type);
+    this.resetNotificationTimer();
+  }
+
+  private clearNotification(): void {
+    this.notificationMessage.set('');
+    this.notificationType.set('');
+    if (this.notificationTimer) {
+      clearTimeout(this.notificationTimer);
+      this.notificationTimer = null;
+    }
+  }
+
+  private resetNotificationTimer(): void {
+    if (this.notificationTimer) {
+      clearTimeout(this.notificationTimer);
+    }
+    this.notificationTimer = setTimeout(() => {
+      this.clearNotification();
+    }, 4000);
   }
 }

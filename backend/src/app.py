@@ -2,7 +2,7 @@ import json
 from typing import Any, Dict
 from services.movies_service import get_movies, get_movie_by_id
 from services.favorites_service import get_favorites, get_favorite_ids, add_favorite, remove_favorite
-from services.profile_service import get_profile, update_profile
+from services.profile_service import get_profile, update_profile, update_profile_picture
 from shared.event_utils import get_page, get_search_query, parse_body
 from shared.auth_utils import get_claims, get_user_id
 
@@ -262,6 +262,28 @@ def lambda_handler(event, context):
                 {
                     "ok": False,
                     "error": "Profile update failed",
+                    "details": str(exc),
+                    "path": path,
+                },
+            )
+
+    if path == "/profile/picture" and method == "POST":
+        try:
+            result = update_profile_picture(event)
+            return _response(
+                200,
+                {
+                    "ok": True,
+                    "path": path,
+                    "data": result,
+                },
+            )
+        except Exception as exc:
+            return _response(
+                500,
+                {
+                    "ok": False,
+                    "error": "Profile picture update failed",
                     "details": str(exc),
                     "path": path,
                 },

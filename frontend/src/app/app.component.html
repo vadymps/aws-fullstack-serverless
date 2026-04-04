@@ -1,17 +1,41 @@
-<div class="app-shell">
-  <aside class="app-sidenav" [class.app-sidenav--hidden]="isHandset()">
-    <nav class="sidenav-content">
-      <a class="nav-link" routerLink="/movies" (click)="handleNavClick()">Movies</a>
-      <a class="nav-link" routerLink="/favorites" (click)="handleNavClick()">Favorites</a>
-      <a class="nav-link" routerLink="/profile" (click)="handleNavClick()">Profile</a>
-      <a class="nav-link" routerLink="/about" (click)="handleNavClick()">About</a>
+<div class="flex min-h-screen flex-col bg-[#f5f6f8] text-slate-900 lg:flex-row">
+  <aside class="hidden w-64 border-r border-slate-200/80 bg-white lg:block">
+    <nav class="flex flex-col gap-2 px-4 py-4">
+      <a
+        class="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+        routerLink="/movies"
+        (click)="handleNavClick()"
+      >
+        Movies
+      </a>
+      <a
+        class="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+        routerLink="/favorites"
+        (click)="handleNavClick()"
+      >
+        Favorites
+      </a>
+      <a
+        class="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+        routerLink="/profile"
+        (click)="handleNavClick()"
+      >
+        Profile
+      </a>
+      <a
+        class="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+        routerLink="/about"
+        (click)="handleNavClick()"
+      >
+        About
+      </a>
     </nav>
   </aside>
 
-  <div class="app-content">
+  <div class="flex min-h-screen flex-1 flex-col">
     <app-header [showMenu]="isHandset()" (menuClick)="toggleMenu()"></app-header>
 
-    <main class="app-main">
+    <main class="flex-1">
       <router-outlet></router-outlet>
     </main>
 
@@ -20,16 +44,44 @@
 
   @if (isHandset()) {
     <div
-      class="mobile-backdrop"
-      [class.mobile-backdrop--open]="menuOpen()"
+      class="fixed inset-0 z-40 bg-slate-900/30 opacity-0 transition-opacity duration-150"
+      [class.opacity-100]="menuOpen()"
+      [class.pointer-events-none]="!menuOpen()"
       (click)="closeMenu()"
     ></div>
-    <aside class="mobile-drawer" [class.mobile-drawer--open]="menuOpen()">
-      <nav class="sidenav-content">
-        <a class="nav-link" routerLink="/movies" (click)="handleNavClick()">Movies</a>
-        <a class="nav-link" routerLink="/favorites" (click)="handleNavClick()">Favorites</a>
-        <a class="nav-link" routerLink="/profile" (click)="handleNavClick()">Profile</a>
-        <a class="nav-link" routerLink="/about" (click)="handleNavClick()">About</a>
+    <aside
+      class="fixed left-0 top-0 z-50 h-full w-64 -translate-x-full border-r border-slate-200/80 bg-white px-4 py-6 transition-transform duration-200"
+      [class.translate-x-0]="menuOpen()"
+    >
+      <nav class="mt-14 flex flex-col gap-2">
+        <a
+          class="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+          routerLink="/movies"
+          (click)="handleNavClick()"
+        >
+          Movies
+        </a>
+        <a
+          class="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+          routerLink="/favorites"
+          (click)="handleNavClick()"
+        >
+          Favorites
+        </a>
+        <a
+          class="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+          routerLink="/profile"
+          (click)="handleNavClick()"
+        >
+          Profile
+        </a>
+        <a
+          class="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+          routerLink="/about"
+          (click)="handleNavClick()"
+        >
+          About
+        </a>
       </nav>
     </aside>
   }

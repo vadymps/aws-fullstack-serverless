@@ -1,0 +1,11 @@
+<div class="snackbar" [ngClass]="type === 'success' ? 'snackbar--success' : 'snackbar--error'">
+  <span class="snackbar__message">{{ message }}</span>
+  <button
+    type="button"
+    class="snackbar__close"
+    (click)="close.emit()"
+    aria-label="Close notification"
+  >
+    ✕
+  </button>
+</div>

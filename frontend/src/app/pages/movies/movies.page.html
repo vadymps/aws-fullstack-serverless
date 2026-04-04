@@ -1,100 +1,136 @@
-<div class="min-h-screen bg-slate-50 text-slate-900">
-  <div class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 lg:flex-row lg:gap-8 lg:px-8">
-    <section class="flex-1 space-y-6">
-      <header
-        class="flex flex-col gap-4 rounded-3xl border border-indigo-100 bg-white p-6 shadow-xl shadow-indigo-100/50">
-        <div class="flex flex-wrap items-center justify-between gap-3">
+<div class="min-h-screen">
+  <div class="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 lg:px-10">
+    <section class="space-y-6">
+      <header class="rounded-[12px] bg-white p-6 shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 class="text-2xl font-semibold">Movie Catalog</h2>
+            <h2 class="text-2xl font-bold text-slate-900">Movie Catalog</h2>
             <p class="text-sm text-slate-500">Search, scan, and queue favorites.</p>
           </div>
-          <div class="text-xs text-slate-500">
+          <div class="text-xs font-medium text-slate-400">
             Page {{ page() }} / {{ totalPages() }} · {{ total() }} total
           </div>
         </div>
-        <div class="relative">
-          <input type="search" placeholder="Search by title..."
-            class="movie-search-input w-full rounded-2xl border border-indigo-100 bg-white px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-            (input)="onSearchInput($any($event.target).value)" (keyup)="onSearchInput($any($event.target).value)" />
+        <div class="mt-4">
+          <input
+            type="search"
+            placeholder="Search by title..."
+            class="w-full rounded-full bg-slate-100 px-4 py-3 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200"
+            (input)="onSearchInput($any($event.target).value)"
+            (keyup)="onSearchInput($any($event.target).value)"
+          />
         </div>
       </header>
 
       @if (error()) {
-      <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
-        {{ error() }}
-      </div>
+        <div class="rounded-[12px] bg-rose-50 p-4 text-sm text-rose-700 shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
+          {{ error() }}
+        </div>
       }
 
       @if (loading()) {
-      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        @for (item of [1, 2, 3, 4, 5, 6]; track item) {
-        <div
-          class="flex flex-col gap-3 rounded-3xl border border-indigo-100 bg-white p-5 shadow-xl shadow-indigo-100/40">
-          <div class="h-5 w-2/3 animate-pulse rounded-full bg-indigo-100"></div>
-          <div class="h-4 w-1/2 animate-pulse rounded-full bg-indigo-100"></div>
-          <div class="h-24 w-full animate-pulse rounded-2xl bg-indigo-100"></div>
-          <div class="h-4 w-3/4 animate-pulse rounded-full bg-indigo-100"></div>
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+            <div class="flex flex-col gap-3 rounded-[12px] bg-white p-5 shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
+              <div class="h-5 w-2/3 animate-pulse rounded-full bg-slate-200/70"></div>
+              <div class="h-4 w-1/2 animate-pulse rounded-full bg-slate-200/70"></div>
+              <div class="h-24 w-full animate-pulse rounded-[10px] bg-slate-200/70"></div>
+              <div class="h-4 w-3/4 animate-pulse rounded-full bg-slate-200/70"></div>
+            </div>
+          }
         </div>
-        }
-      </div>
       }
 
       @if (!loading() && !error()) {
-      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        @for (movie of movies(); track movie._id) {
-        <a [routerLink]="['/movies', movie._id]" [queryParams]="{ from: 'movies' }" class="block">
-          <article
-            class="group relative rounded-3xl border border-indigo-100 bg-white p-5 shadow-xl shadow-indigo-100/40 transition duration-300 hover:scale-105 hover:border-indigo-400/60">
-            <button type="button" class="favorite-button" [class.favorite-button--active]="isFavorite(movie._id)"
-              (click)="toggleFavorite($event, movie)" aria-label="Toggle favorite">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 0.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-              </svg>
-            </button>
-            <div class="mb-4 overflow-hidden rounded-2xl border border-indigo-50 bg-indigo-50">
-              <img [src]="movie.poster || 'assets/poster-placeholder.svg'" [alt]="movie.title || 'Movie poster'"
-                class="w-full object-cover" loading="lazy" (error)="onPosterError($event)" />
-            </div>
-            <div class="flex items-center justify-between">
-              <h3 class="text-lg font-semibold text-slate-900">
-                {{ movie.title || 'Untitled' }}
-              </h3>
-              <span class="text-xs text-slate-500">{{ movie.year || '—' }}</span>
-            </div>
-            <p class="mt-2 text-sm text-slate-500">
-              {{ movie.runtime ? movie.runtime + ' min' : 'Runtime TBD' }}
-            </p>
-            <div class="mt-4 flex flex-wrap gap-2">
-              @if (movie.genres?.length) {
-              @for (genre of movie.genres; track genre) {
-              <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs text-indigo-600">
-                {{ genre }}
-              </span>
-              }
-              } @else {
-              <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs text-indigo-300">
-                No genres
-              </span>
-              }
-            </div>
-          </article>
-        </a>
-        }
-      </div>
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          @for (movie of movies(); track movie._id) {
+            <a [routerLink]="['/movies', movie._id]" [queryParams]="{ from: 'movies' }" class="block">
+              <article
+                class="group relative rounded-[12px] bg-white p-5 shadow-[0_10px_24px_rgba(0,0,0,0.05)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(0,0,0,0.08)]"
+              >
+                <button
+                  type="button"
+                  class="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border text-slate-400 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition"
+                  [ngClass]="
+                    isFavorite(movie._id)
+                      ? 'border-rose-200 bg-rose-50 text-rose-500'
+                      : 'border-slate-200 bg-white/95 hover:-translate-y-0.5'
+                  "
+                  (click)="toggleFavorite($event, movie)"
+                  aria-label="Toggle favorite"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    class="h-4 w-4"
+                    [ngClass]="
+                      isFavorite(movie._id)
+                        ? 'fill-current stroke-current'
+                        : 'fill-none stroke-current'
+                    "
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 0.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+                <div class="mb-4 overflow-hidden rounded-[10px] bg-slate-100">
+                  <img
+                    [src]="movie.poster || 'assets/poster-placeholder.svg'"
+                    [alt]="movie.title || 'Movie poster'"
+                    class="w-full object-cover"
+                    loading="lazy"
+                    (error)="onPosterError($event)"
+                  />
+                </div>
+                <div class="flex items-center justify-between">
+                  <h3 class="text-lg font-semibold text-slate-900">
+                    {{ movie.title || 'Untitled' }}
+                  </h3>
+                  <span class="text-xs text-slate-400">{{ movie.year || '—' }}</span>
+                </div>
+                <p class="mt-2 text-sm text-slate-500">
+                  {{ movie.runtime ? movie.runtime + ' min' : 'Runtime TBD' }}
+                </p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  @if (movie.genres?.length) {
+                    @for (genre of movie.genres; track genre) {
+                      <span class="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
+                        {{ genre }}
+                      </span>
+                    }
+                  } @else {
+                    <span class="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-400">
+                      No genres
+                    </span>
+                  }
+                </div>
+              </article>
+            </a>
+          }
+        </div>
 
-      <div class="flex items-center justify-between pt-2 text-sm text-slate-500">
-        <button type="button"
-          class="rounded-xl border border-indigo-100 bg-white px-4 py-2 text-slate-700 shadow-sm shadow-indigo-100/40 hover:border-indigo-300 disabled:opacity-50"
-          (click)="prevPage()" [disabled]="loading() || page() <= 1">
-          Previous
-        </button>
-        <button type="button"
-          class="rounded-xl border border-indigo-100 bg-white px-4 py-2 text-slate-700 shadow-sm shadow-indigo-100/40 hover:border-indigo-300 disabled:opacity-50"
-          (click)="nextPage()" [disabled]="loading() || page() >= totalPages()">
-          Next
-        </button>
-      </div>
+        <div class="flex items-center justify-between gap-4 pt-2 text-sm text-slate-500">
+          <button
+            type="button"
+            class="rounded-full bg-white px-5 py-2 text-slate-700 shadow-[0_6px_18px_rgba(0,0,0,0.06)] transition hover:-translate-y-0.5 disabled:opacity-50"
+            (click)="prevPage()"
+            [disabled]="loading() || page() <= 1"
+          >
+            Previous
+          </button>
+          <button
+            type="button"
+            class="rounded-full bg-white px-5 py-2 text-slate-700 shadow-[0_6px_18px_rgba(0,0,0,0.06)] transition hover:-translate-y-0.5 disabled:opacity-50"
+            (click)="nextPage()"
+            [disabled]="loading() || page() >= totalPages()"
+          >
+            Next
+          </button>
+        </div>
       }
     </section>
   </div>

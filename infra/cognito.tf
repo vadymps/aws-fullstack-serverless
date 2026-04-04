@@ -50,7 +50,6 @@ resource "aws_cognito_user_pool_client" "frontend" {
   generate_secret = false
 
   explicit_auth_flows = [
-    "ALLOW_USER_PASSWORD_AUTH",
     "ALLOW_USER_SRP_AUTH",
     "ALLOW_REFRESH_TOKEN_AUTH"
   ]
@@ -59,8 +58,8 @@ resource "aws_cognito_user_pool_client" "frontend" {
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes = ["email","openid","profile","aws.cognito.signin.user.admin"]
 
-  callback_urls = [local.cloudfront_url, "http://localhost:4200"]
-  logout_urls   = [local.cloudfront_url, "http://localhost:4200"]
+  callback_urls = ["${local.cloudfront_url}/profile", "http://localhost:4200/profile"]
+  logout_urls   = ["${local.cloudfront_url}/profile", "http://localhost:4200/profile"]
 
   read_attributes = [
     "email",

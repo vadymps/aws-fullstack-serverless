@@ -5,15 +5,15 @@ resource "aws_cloudfront_distribution" "site" {
   price_class         = "PriceClass_100"
 
   origin {
-    domain_name = aws_s3_bucket_website_configuration.site.website_endpoint
+    domain_name = aws_s3_bucket.site.bucket_regional_domain_name
     origin_id   = "${var.project_name}-s3-website"
+    origin_access_control_id = aws_cloudfront_origin_access_control.webapp.id
+  }
 
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
+  origin {
+    domain_name              = aws_s3_bucket.avatars.bucket_regional_domain_name
+    origin_id                = "${var.project_name}-avatars"
+    origin_access_control_id = aws_cloudfront_origin_access_control.default.id
   }
 
   origin {
@@ -26,12 +26,6 @@ resource "aws_cloudfront_distribution" "site" {
       origin_protocol_policy = "https-only"
       origin_ssl_protocols   = ["TLSv1.2"]
     }
-  }
-
-  origin {
-    domain_name              = aws_s3_bucket.avatars.bucket_regional_domain_name
-    origin_id                = "${var.project_name}-avatars"
-    origin_access_control_id = aws_cloudfront_origin_access_control.default.id
   }
 
   ordered_cache_behavior {
@@ -72,6 +66,11 @@ resource "aws_cloudfront_distribution" "site" {
     compress                 = true
     cache_policy_id          = data.aws_cloudfront_cache_policy.managed_caching_optimized.id
     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.managed_cors_s3_origin.id
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.spa_rewrite.arn
+    }
   }
 
   restrictions {
@@ -88,6 +87,14 @@ resource "aws_cloudfront_distribution" "site" {
 resource "aws_cloudfront_origin_access_control" "default" {
   name                              = "${var.project_name}-avatars-oac"
   description                       = "OAC for avatars S3 bucket"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
+resource "aws_cloudfront_origin_access_control" "webapp" {
+  name                              = "${var.project_name}-webapp-oac"
+  description                       = "OAC for webapp S3 bucket"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
@@ -123,6 +130,28 @@ function handler(event) {
   } else if (request.uri.startsWith("/api/")) {
     request.uri = request.uri.substring(4);
   }
+  return request;
+}
+EOF
+}
+
+resource "aws_cloudfront_function" "spa_rewrite" {
+  name    = "${var.project_name}-spa-rewrite"
+  runtime = "cloudfront-js-1.0"
+  comment = "Rewrite SPA routes to /index.html"
+  publish = true
+
+  code = <<EOF
+function handler(event) {
+  var request = event.request;
+  var uri = request.uri;
+
+  // Leave asset requests alone
+  if (uri.includes(".")) {
+    return request;
+  }
+
+  request.uri = "/index.html";
   return request;
 }
 EOF

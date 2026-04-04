@@ -1,97 +1,115 @@
-<div class="min-h-screen bg-slate-50 text-slate-900">
-  <div class="mx-auto max-w-5xl px-4 py-6 lg:px-8">
-    <a [routerLink]="backLink()" class="text-sm text-indigo-600 hover:underline">
-      ← {{ backLabel() }}
+<div class="min-h-screen">
+  <div class="mx-auto max-w-6xl px-4 py-6 lg:px-10">
+    <a
+      [routerLink]="backLink()"
+      class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-700"
+    >
+      <span class="text-base">←</span>
+      {{ backLabel() }}
     </a>
 
     @if (loading()) {
-    <div class="mt-6 rounded-3xl border border-indigo-100 bg-white p-6 shadow-xl shadow-indigo-100/40">
-      <div class="h-6 w-1/3 animate-pulse rounded-full bg-indigo-100"></div>
-      <div class="mt-4 h-80 w-full animate-pulse rounded-3xl bg-indigo-100"></div>
-      <div class="mt-6 h-4 w-2/3 animate-pulse rounded-full bg-indigo-100"></div>
-      <div class="mt-2 h-4 w-1/2 animate-pulse rounded-full bg-indigo-100"></div>
-    </div>
+      <div class="mt-6 rounded-[12px] bg-white p-6 shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
+        <div class="h-6 w-1/3 animate-pulse rounded-full bg-slate-200/70"></div>
+        <div class="mt-4 h-80 w-full animate-pulse rounded-[12px] bg-slate-200/70"></div>
+        <div class="mt-6 h-4 w-2/3 animate-pulse rounded-full bg-slate-200/70"></div>
+        <div class="mt-2 h-4 w-1/2 animate-pulse rounded-full bg-slate-200/70"></div>
+      </div>
     }
 
     @if (error()) {
-    <div class="mt-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
-      {{ error() }}
-    </div>
+      <div class="mt-6 rounded-[12px] bg-rose-50 p-4 text-sm text-rose-700 shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
+        {{ error() }}
+      </div>
     }
 
     @if (!loading() && !error() && movie()) {
-    <div class="mt-6 grid gap-6 lg:grid-cols-[320px_1fr]">
-      <div class="rounded-3xl border border-indigo-100 bg-white p-5 shadow-xl shadow-indigo-100/40">
-        <img
-          [src]="movie()?.poster || 'assets/poster-placeholder.svg'"
-          [alt]="movie()?.title || 'Movie poster'"
-          class="h-96 w-full rounded-2xl object-cover"
-          loading="lazy"
-          (error)="onPosterError($event)"
-        />
+      <div class="mt-6 grid gap-6 lg:grid-cols-[320px_1fr]">
+        <div class="rounded-[12px] bg-white p-5 shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
+          <img
+            [src]="movie()?.poster || 'assets/poster-placeholder.svg'"
+            [alt]="movie()?.title || 'Movie poster'"
+            class="h-96 w-full rounded-[10px] object-cover"
+            loading="lazy"
+            (error)="onPosterError($event)"
+          />
+        </div>
+
+        <div class="rounded-[12px] bg-white p-6 shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h1 class="text-3xl font-semibold text-slate-900">
+                {{ movie()?.title || 'Untitled' }}
+              </h1>
+              <p class="mt-2 text-sm text-slate-500">
+                {{ movie()?.year || '—' }} · {{ movie()?.runtime ? movie()?.runtime + ' min' : 'Runtime TBD' }}
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">
+                {{ movie()?.rated || 'NR' }}
+              </span>
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition"
+                [ngClass]="
+                  isFavorite()
+                    ? 'border-rose-200 bg-rose-50 text-rose-600'
+                    : 'border-slate-200 bg-white text-slate-500 hover:-translate-y-0.5'
+                "
+                (click)="toggleFavorite($event)"
+                aria-label="Toggle favorite"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  class="h-4 w-4"
+                  [ngClass]="isFavorite() ? 'fill-current stroke-current' : 'fill-none stroke-current'"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 0.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <span>{{ isFavorite() ? 'Favorited' : 'Favorite' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-wrap gap-2">
+            @for (genre of movie()?.genres || []; track genre) {
+              <span class="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
+                {{ genre }}
+              </span>
+            }
+          </div>
+
+          <div class="mt-6 text-sm leading-relaxed text-slate-600">
+            {{ movie()?.fullplot || movie()?.plot || 'Plot not available yet.' }}
+          </div>
+
+          <div class="mt-6 grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
+            <div>
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Cast</p>
+              <p class="mt-1">{{ (movie()?.cast || []).slice(0, 6).join(', ') || 'TBD' }}</p>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Directors</p>
+              <p class="mt-1">{{ (movie()?.directors || []).join(', ') || 'TBD' }}</p>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Countries</p>
+              <p class="mt-1">{{ (movie()?.countries || []).join(', ') || 'TBD' }}</p>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Language</p>
+              <p class="mt-1">{{ movie()?.language || 'TBD' }}</p>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <div class="rounded-3xl border border-indigo-100 bg-white p-6 shadow-xl shadow-indigo-100/40">
-        <div class="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 class="text-3xl font-semibold text-slate-900">
-              {{ movie()?.title || 'Untitled' }}
-            </h1>
-            <p class="mt-2 text-sm text-slate-500">
-              {{ movie()?.year || '—' }} · {{ movie()?.runtime ? movie()?.runtime + ' min' : 'Runtime TBD' }}
-            </p>
-          </div>
-          <div class="detail-actions">
-            <span class="rating">{{ movie()?.rated || 'NR' }}</span>
-            <button
-              type="button"
-              class="favorite-button"
-              [class.favorite-button--active]="isFavorite()"
-              (click)="toggleFavorite($event)"
-              aria-label="Toggle favorite"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 0.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                />
-              </svg>
-              <span>{{ isFavorite() ? 'Favorited' : 'Favorite' }}</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="mt-4 flex flex-wrap gap-2">
-          @for (genre of movie()?.genres || []; track genre) {
-          <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs text-indigo-600">
-            {{ genre }}
-          </span>
-          }
-        </div>
-
-        <div class="mt-6 text-sm text-slate-700 leading-relaxed">
-          {{ movie()?.fullplot || movie()?.plot || 'Plot not available yet.' }}
-        </div>
-
-        <div class="mt-6 grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
-          <div>
-            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Cast</p>
-            <p class="mt-1">{{ (movie()?.cast || []).slice(0, 6).join(', ') || 'TBD' }}</p>
-          </div>
-          <div>
-            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Directors</p>
-            <p class="mt-1">{{ (movie()?.directors || []).join(', ') || 'TBD' }}</p>
-          </div>
-          <div>
-            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Countries</p>
-            <p class="mt-1">{{ (movie()?.countries || []).join(', ') || 'TBD' }}</p>
-          </div>
-          <div>
-            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Language</p>
-            <p class="mt-1">{{ movie()?.language || 'TBD' }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
     }
   </div>
 </div>
