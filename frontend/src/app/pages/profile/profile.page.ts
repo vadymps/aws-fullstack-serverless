@@ -55,23 +55,19 @@ export class ProfilePageComponent implements OnInit {
     this.loadingProfile.set(true);
 
     try {
-      const claims = this.auth.getIdTokenClaims();
-      if (!claims) {
+      const response = await firstValueFrom(this.profileService.getProfile());
+      if (!response?.data) {
         this.showNotification('Unable to load your profile. Please try again.', 'error');
         return;
       }
 
-      const givenName = typeof claims['given_name'] === 'string' ? claims['given_name'] : '';
-      const familyName = typeof claims['family_name'] === 'string' ? claims['family_name'] : '';
-      const picture = typeof claims['picture'] === 'string' ? claims['picture'] : '';
-      const email = typeof claims['email'] === 'string' ? claims['email'] : '';
-
       this.profileForm.patchValue({
-        givenName,
-        familyName,
-        email
+        givenName: response.data.given_name || '',
+        familyName: response.data.family_name || '',
+        email: response.data.email || ''
       });
-      this.pictureUrl.set(picture);
+      this.profileForm.markAsPristine();
+      this.pictureUrl.set(response.data.picture || '');
     } catch (err) {
       this.showNotification('Unable to load your profile. Please try again.', 'error');
     } finally {

@@ -17,7 +17,6 @@ export class AuthService {
 
   async init(): Promise<void> {
     if (this.initPromise) {
-      // Even if we have a cached promise, re-check authentication state
       await this.initPromise;
       this.isAuthenticated.set(this.oauthService.hasValidAccessToken());
       return this.initPromise;
@@ -45,12 +44,10 @@ export class AuthService {
           this.authConfig = authConfig;
         }
 
-        console.log('Attempting to load the discovery document...');
         await this.oauthService.loadDiscoveryDocumentAndTryLogin();
         this.isAuthenticated.set(this.oauthService.hasValidAccessToken());
       } catch (err) {
         console.error('CRITICAL ERROR: ', err);
-        // Even if there's an error loading discovery document, set authenticated to false
         this.isAuthenticated.set(false);
       }
     })();

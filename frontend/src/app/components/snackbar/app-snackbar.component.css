@@ -4,7 +4,7 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 60;
-  width: 97vw;
+  width: 90vw;
 }
 
 .snackbar {

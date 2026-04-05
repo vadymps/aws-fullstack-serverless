@@ -49,10 +49,22 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Build frontend
+      - name: Frontend unit tests
         run: |
           cd frontend
           npm ci
+          npm run test
+
+      - name: Frontend e2e tests
+        run: |
+          cd frontend
+          npm run mock-api &
+          npx playwright install --with-deps
+          npm run e2e
+
+      - name: Build frontend
+        run: |
+          cd frontend
           npm run build -- --configuration production
 
       - name: Sync frontend to S3

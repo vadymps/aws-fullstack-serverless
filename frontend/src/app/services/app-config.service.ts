@@ -1,37 +1,28 @@
 import { Injectable } from '@angular/core';
-
-type AuthConfig = {
-  issuer?: string;
-  clientId?: string;
-  redirectUri?: string;
-  postLogoutRedirectUri?: string;
-  scope?: string;
-  requireHttps?: boolean;
-};
-
-export type AppConfig = {
-  production: boolean;
-  apiUrl: string;
-  auth: AuthConfig;
-};
+import { AppConfig } from '../models/app-config.model';
 
 @Injectable({ providedIn: 'root' })
 export class AppConfigService {
-  private config: AppConfig | null = null;
+  private config: AppConfig = {
+    production: false,
+    apiUrl: "/api",
+    auth: {}
+  };
 
   async load(): Promise<void> {
-    const response = await fetch('/assets/config.json', { cache: 'no-store' });
-    if (!response.ok) {
-      throw new Error(`Failed to load config.json: ${response.status} ${response.statusText}`);
+    try {
+      const response = await fetch('/assets/config.json', { cache: 'no-store' });
+      if (response.ok) {
+        this.config = await response.json();
+      } else {
+        console.error("Failed to load config.");
+      }
+    } catch (error) {
+      console.error("Failed to load config:", error);
     }
-    const data = (await response.json()) as AppConfig;
-    this.config = data;
   }
 
   get(): AppConfig {
-    if (!this.config) {
-      throw new Error('App config not loaded.');
-    }
     return this.config;
   }
 }
