@@ -49,10 +49,14 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Frontend unit tests
+      - name: Install dependencies
         run: |
           cd frontend
           npm ci
+
+      - name: Frontend unit tests
+        run: |
+          cd frontend
           npm run test
 
       - name: Frontend e2e tests
