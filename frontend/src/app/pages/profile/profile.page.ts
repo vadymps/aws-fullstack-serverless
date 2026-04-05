@@ -18,8 +18,7 @@ export class ProfilePageComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   public authorized = signal(false);
-  public checking = signal(true);
-  public loadingProfile = signal(false);
+  public loadingProfile = signal(true);
   public savingProfile = signal(false);
   public savingPicture = signal(false);
   public pendingPicture = signal(false);
@@ -39,10 +38,9 @@ export class ProfilePageComponent implements OnInit {
     this.auth.init().then(() => {
       if (this.auth.isAuthenticated()) {
         this.authorized.set(true);
-        this.checking.set(false);
         this.loadProfile();
       } else {
-        this.checking.set(false);
+        this.loadingProfile.set(false);
       }
     });
   }
@@ -52,8 +50,6 @@ export class ProfilePageComponent implements OnInit {
   }
 
   async loadProfile(): Promise<void> {
-    this.loadingProfile.set(true);
-
     try {
       const response = await firstValueFrom(this.profileService.getProfile());
       if (!response?.data) {
@@ -83,8 +79,8 @@ export class ProfilePageComponent implements OnInit {
     }
 
     if (file.size > 5 * 1024 * 1024) {
-    this.showNotification('Image must be 5MB or smaller.', 'error');
-    return;
+      this.showNotification('Image must be 5MB or smaller.', 'error');
+      return;
     }
 
     this.clearNotification();
@@ -111,8 +107,8 @@ export class ProfilePageComponent implements OnInit {
     }
 
     if (hasFormChanges && this.profileForm.invalid) {
-    this.showNotification('Please fill in all required fields.', 'error');
-    return;
+      this.showNotification('Please fill in all required fields.', 'error');
+      return;
     }
 
     this.clearNotification();

@@ -1,8 +1,10 @@
-@if (checking()) {
+@if (loadingProfile()) {
   <section class="flex justify-center px-4 py-10">
     <div class="w-full max-w-xl rounded-[12px] bg-white p-6 shadow-[0_10px_24px_rgba(0,0,0,0.05)]">
       <div class="flex flex-col gap-6">
-        <div class="h-16 w-16 animate-pulse rounded-full bg-slate-200/70"></div>
+        <div class="flex w-full justify-center">
+          <div class="h-32 w-32 animate-pulse rounded-full bg-slate-200/70 object-cover shadow-[0_12px_24px_rgba(0,0,0,0.1)]"></div>
+        </div>
         <div class="space-y-3">
           <div class="h-5 w-2/3 animate-pulse rounded-full bg-slate-200/70"></div>
           <div class="h-4 w-1/2 animate-pulse rounded-full bg-slate-200/70"></div>
@@ -107,10 +109,6 @@
           />
         </div>
       </form>
-
-      @if (loadingProfile()) {
-        <p class="mt-4 text-sm font-medium text-slate-400">Loading profile...</p>
-      }
 
       <div class="mt-6 grid gap-3">
         <button
