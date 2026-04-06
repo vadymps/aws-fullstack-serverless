@@ -68,6 +68,24 @@ Resources:
             ApiId: !Ref BackendApi
             Method: POST
             Path: /favorites
+        ProfileGet:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BackendApi
+            Method: GET
+            Path: /profile
+        ProfileUpdate:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BackendApi
+            Method: POST
+            Path: /profile
+        ProfilePictureUpdate:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BackendApi
+            Method: POST
+            Path: /profile/picture
         FavoriteDelete:
           Type: HttpApi
           Properties:
