@@ -78,6 +78,14 @@ resource "aws_apigatewayv2_route" "profile_update" {
   authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
 }
 
+resource "aws_apigatewayv2_route" "profile_picture_update" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "POST /profile/picture"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
 resource "aws_apigatewayv2_route" "favorites_create" {
   api_id             = aws_apigatewayv2_api.http.id
   route_key          = "POST /favorites"

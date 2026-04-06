@@ -23,7 +23,7 @@ For faster local iterations (keep Lambda container warm / "hot state"):
 - `sam local start-api --host 0.0.0.0 --warm-containers EAGER`
 - Use `LAZY` instead of `EAGER` if you want lower resource usage while still reducing repeated cold starts:
 - `sam local start-api --host 0.0.0.0 --warm-containers LAZY`
-
+- Use specific profile and region:
 - `AWS_PROFILE=dev sam local start-api --host 0.0.0.0 --warm-containers LAZY --region eu-central-1`
 
 Local API URL:
@@ -56,6 +56,8 @@ Prereqs:
 Start SAM with debug args:
 - `sam build --use-container --cached --skip-pull-image`
 - `sam local start-api --host 0.0.0.0 --warm-containers LAZY --debug-port 5859 --debug-function BackendFunction --debug-args "-m debugpy --listen 0.0.0.0:5859 --wait-for-client"`
+- Use specific profile and region:
+- `AWS_PROFILE=dev sam local start-api --host 0.0.0.0 --warm-containers LAZY --debug-port 5859 --debug-function BackendFunction --debug-args "-m debugpy --listen 0.0.0.0:5859 --wait-for-client" --region eu-central-1`
 
 Attach flow:
 - Hit an endpoint once (for example `curl "http://127.0.0.1:3000/movies"`).
