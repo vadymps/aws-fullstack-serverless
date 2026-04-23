@@ -3,10 +3,10 @@
 This repo will host a minimal AWS serverless demo with:
 - Angular frontend hosted on S3
 - API Gateway HTTP API + AWS Lambda (Python)
-- Amazon Cognito for authentication
+- Amazon Cognito for authentication (OIDC, no long-lived keys)
 - MongoDB Atlas free tier
 - Terraform for AWS infrastructure
-- GitHub Actions CI/CD (OIDC, no long-lived keys)
+- GitHub Actions CI/CD
 
 ## About
 AWS Fullstack Serverless Movie Catalog is a lightweight Angular SPA backed by a
