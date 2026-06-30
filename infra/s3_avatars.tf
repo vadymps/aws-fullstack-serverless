@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "avatars" {
   bucket = "${var.project_name}-user-avatars"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_cors_configuration" "avatars" {
